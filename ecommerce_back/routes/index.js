@@ -1,9 +1,15 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const db = require('../config/db');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/', async (req, res, next) => {
+  try {
+    const [rows, fields] = await db.query('SELECT * FROM produit');
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;
