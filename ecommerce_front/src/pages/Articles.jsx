@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaFilter } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const Articles = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -69,7 +71,7 @@ const Articles = () => {
             <div className="row">
                 {filteredProducts.map(product => (
                     <div key={product.id_produit} className="col-md-4 mb-4">
-                        <div className="card h-100 d-flex flex-column">
+                        <div className="card h-100 d-flex flex-column" onClick={() => {navigate(`/details-article/${product.id_produit}`)}}>
                             <div className="d-flex justify-content-center align-items-center" style={{ height: '300px', overflow: 'hidden' }}>
                                 <img
                                     src={`http://localhost:3000/image/${product.id_produit}-1.jpg`}
