@@ -11,7 +11,6 @@ const sendOrderSummary = async (to, subject, text, html) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully');
   } catch (error) {
     console.error('Error sending email:', error);
   }

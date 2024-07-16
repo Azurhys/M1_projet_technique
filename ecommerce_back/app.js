@@ -16,7 +16,7 @@ var panierProduitsRouter = require('./routes/panierProduits')
 var commandesRouter = require('./routes/commandes')
 const authRouter = require('./routes/auth');
 const authMiddleware = require('./middleware/auth');
-
+const checkRole = require('./middleware/roles')
 
 var app = express();
 
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/', indexRouter);
-app.use('/users',authMiddleware, usersRouter);
+app.use('/users',authMiddleware,checkRole([1]), usersRouter);
 app.use('/produits', produitsRouter);
 app.use('/image', imageRouter);
 app.use('/download', authMiddleware, downloadRouter);

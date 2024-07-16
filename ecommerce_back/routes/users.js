@@ -20,9 +20,6 @@ router.post('/add', async (req, res, next) => {
 
 //GET ALL
 router.get('/', async (req, res, next) => {
-  if (req.user.role !== 1) {
-    return res.status(403).json({ message: 'Accès refusé pour le rôle: ' + req.user.role });
-  }
   try {
     const [rows] = await db.query('SELECT * FROM Utilisateur');
     res.status(200).json(rows);
@@ -33,10 +30,6 @@ router.get('/', async (req, res, next) => {
 
 //GET ONE
 router.get('/:id_utilisateur', async (req, res, next) => {
-  if (req.user.role !== 1) { // Supposons que le rôle 1 est celui d'administrateur
-    return res.status(403).json({ message: 'Accès refusé pour le rôle: ' + req.user.role });
-  }
-
   const { id_utilisateur } = req.params;
   try {
     const [rows] = await db.query('SELECT * FROM Utilisateur WHERE id_utilisateur = ?', [id_utilisateur]);
@@ -52,9 +45,6 @@ router.get('/:id_utilisateur', async (req, res, next) => {
 
 //PUT
 router.put('/put/:id_utilisateur', async (req, res, next) => {
-  if (req.user.role !== 1) { // Supposons que le rôle 1 est celui d'administrateur
-    return res.status(403).json({ message: 'Accès refusé pour le rôle: ' + req.user.role });
-  }
   const { id_utilisateur } = req.params;
   const { nom, prenom, email, mot_de_passe, adresse, telephone, droit } = req.body;
   try {
@@ -70,9 +60,6 @@ router.put('/put/:id_utilisateur', async (req, res, next) => {
 
 //DELETE
 router.delete('/delete/:id_utilisateur', async (req, res, next) => {
-  if (req.user.role !== 1) { // Supposons que le rôle 1 est celui d'administrateur
-    return res.status(403).json({ message: 'Accès refusé pour le rôle: ' + req.user.role });
-  }
   const { id_utilisateur } = req.params;
   try {
     await db.query('DELETE FROM Utilisateur WHERE id_utilisateur = ?', [id_utilisateur]);
