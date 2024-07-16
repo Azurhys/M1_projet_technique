@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const Order = require('../models/commande');
+const sendOrderSummary = require('../utils/sendEmail');
+const getUserEmail = require('../utils/getUserEmail');
 
 //ADD
 router.post('/add', async (req, res, next) => {
@@ -13,6 +15,18 @@ router.post('/add', async (req, res, next) => {
     );
     const newOrder = new Order(result.insertId, id_utilisateur, id_panier, date_commande, total, adresse_livraison, adresse_facturation, mode_paiement, statut_commande);
     res.status(201).json(newOrder);
+
+    const userEmail = await getUserEmail(id_utilisateur);
+    if (userEmail) {
+      const subject = 'Récapitulatif de votre commande';
+      const text = `Merci pour votre commande. Voici les détails:\n\nTotal: ${total}\nAdresse de livraison: ${adresse_livraison}\nAdresse de facturation: ${adresse_facturation}\nMode de paiement: ${mode_paiement}\nStatut de la commande: ${statut_commande}`;
+      const html = `<h1>Merci pour votre commande</h1><p>Voici les détails:</p><ul><li>Total: ${total}</li><li>Adresse de livraison: ${adresse_livraison}</li><li>Adresse de facturation: ${adresse_facturation}</li><li>Mode de paiement: ${mode_paiement}</li><li>Statut de la commande: ${statut_commande}</li></ul>`;
+
+      await sendOrderSummary(userEmail, subject, text, html);
+    } else {
+      console.error('Email de l\'utilisateur non trouvé');
+    }
+
   } catch (err) {
     next(err);
   }
