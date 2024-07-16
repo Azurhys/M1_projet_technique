@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './app.css'
 
 function App() {

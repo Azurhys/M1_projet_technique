@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { FaFilter } from 'react-icons/fa';
 
 const Articles = () => {
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -16,17 +19,29 @@ const Articles = () => {
             }
         };
 
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/categories');
+                const data = await response.json();
+                setCategories(data);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
         fetchProducts();
+        fetchCategories();
     }, []);
 
     const filteredProducts = products.filter(product =>
-        product.nom.toLowerCase().includes(searchTerm.toLowerCase())
+        product.nom.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedCategory === '' || product.id_categorie === selectedCategory)
     );
 
     return (
         <div className="container">
             <div className="row my-4">
-                <div className="col">
+                <div className="col-9">
                     <input
                         type="text"
                         className="form-control"
@@ -35,17 +50,32 @@ const Articles = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
+                <div className="col-3 d-flex align-items-center">
+                    <div className="dropdown w-100">
+                        <button className="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <FaFilter /> Filtrer par catégorie
+                        </button>
+                        <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><button className="dropdown-item" onClick={() => setSelectedCategory('')}>Toutes les catégories</button></li>
+                            {categories.map(category => (
+                                <li key={category.id}>
+                                    <button className="dropdown-item" onClick={() => setSelectedCategory(category.id_categorie)}>{category.nom}</button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div className="row">
                 {filteredProducts.map(product => (
                     <div key={product.id_produit} className="col-md-4 mb-4">
                         <div className="card h-100 d-flex flex-column">
-                            <div className="d-flex justify-content-center align-items-center" style={{ height: '300px', width: 'auto', overflow: 'hidden' }}>
+                            <div className="d-flex justify-content-center align-items-center" style={{ height: '300px', overflow: 'hidden' }}>
                                 <img
                                     src={`../../images/${product.id_produit}-1.jpg`}
                                     className="card-img-top"
                                     alt={product.nom}
-                                    style={{ height: '80%', width: 'auto'}}
+                                    style={{ height: '80%', width: 'auto' }}
                                 />
                             </div>
                             <div className="card-body d-flex flex-column">
