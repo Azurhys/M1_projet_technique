@@ -32,7 +32,8 @@ CREATE TABLE Utilisateur (
     email VARCHAR(255) NOT NULL UNIQUE,
     mot_de_passe VARCHAR(255) NOT NULL,
     adresse TEXT,
-    telephone VARCHAR(20)
+    telephone VARCHAR(20),
+    droit TINYINT(1) NOT NULL
 );
 
 -- Table Panier

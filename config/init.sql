@@ -1,7 +1,57 @@
+DROP DATABASE IF EXISTS ecommerce;
+
+CREATE DATABASE ecommerce;
+
 USE ecommerce;
 
+SET FOREIGN_KEY_CHECKS = 0;
+    
+-- Supprimer la table Produit en premier pour éviter les erreurs de contrainte de clé étrangère
 DROP TABLE IF EXISTS Produit;
 
+-- Ensuite, supprimer la table Categorie
+DROP TABLE IF EXISTS Categorie;
+
+-- Créer la table Categorie
+CREATE TABLE Categorie (
+    id_categorie INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    id_categorie_parent INT,
+    FOREIGN KEY (id_categorie_parent) REFERENCES Categorie(id_categorie)
+);
+
+-- Insérer des catégories
+INSERT INTO Categorie (nom, id_categorie_parent) VALUES
+('Informatique', NULL),
+('Électronique', NULL),
+('Appareils Électroménagers', NULL),
+('Ordinateurs', 1),
+('Smartphones', 1),
+('Périphériques', 1),
+('Télévisions', 2),
+('Audio', 2),
+('Réfrigérateurs', 3),
+('Lave-linge', 3),
+('Cuisine', 3),
+('Climatisation', 3),
+('Sécurité', 3),
+('Réseau', 3),
+('Montres', 2),
+('Stockage', 1);
+
+-- Créer la table Produit
+CREATE TABLE Produit (
+    id_produit INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    description TEXT,
+    prix DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL,
+    image_url VARCHAR(255),
+    id_categorie INT,
+    FOREIGN KEY (id_categorie) REFERENCES Categorie(id_categorie)
+);
+
+-- Insérer des produits
 INSERT INTO Produit (nom, description, prix, stock, image_url, id_categorie) VALUES
 ('Ordinateur Portable HP', 'Ordinateur portable HP avec processeur Intel Core i5, 8 Go de RAM et 256 Go de SSD.', 749.99, 50, 'image_url1.jpg', 4),
 ('Smartphone Samsung Galaxy S21', 'Smartphone Samsung Galaxy S21 avec écran AMOLED 6.2 pouces, 128 Go de stockage.', 999.99, 30, 'image_url2.jpg', 5),
@@ -28,3 +78,50 @@ INSERT INTO Produit (nom, description, prix, stock, image_url, id_categorie) VAL
 ('Cafetière Filtre Moulinex', 'Cafetière filtre Moulinex avec capacité de 1.25 litres et fonction maintien au chaud.', 39.99, 40, 'image_url23.jpg', 11),
 ('Sèche-cheveux Remington', 'Sèche-cheveux Remington avec moteur AC de 2200 W et 3 réglages de température.', 49.99, 30, 'image_url24.jpg', 3),
 ('Chargeur Sans Fil Anker', 'Chargeur sans fil Anker compatible avec la charge rapide Qi et sortie 10W.', 24.99, 50, 'image_url25.jpg', 3);
+
+CREATE TABLE Utilisateur (
+    id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    prenom VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    adresse TEXT,
+    telephone VARCHAR(20)
+);
+
+-- Table Panier
+CREATE TABLE Panier (
+    id_panier INT AUTO_INCREMENT PRIMARY KEY,
+    id_utilisateur INT,
+    date_creation DATETIME NOT NULL,
+    statut VARCHAR(50) NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+);
+
+-- Table Panier_Produit
+CREATE TABLE Panier_Produit (
+    id_panier INT,
+    id_produit INT,
+    quantite INT,
+    PRIMARY KEY (id_panier, id_produit),
+    FOREIGN KEY (id_panier) REFERENCES Panier(id_panier),
+    FOREIGN KEY (id_produit) REFERENCES Produit(id_produit)
+);
+
+-- Table Commande
+CREATE TABLE Commande (
+    id_commande INT AUTO_INCREMENT PRIMARY KEY,
+    id_utilisateur INT,
+    id_panier INT,
+    date_commande DATETIME NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    adresse_livraison TEXT NOT NULL,
+    adresse_facturation TEXT NOT NULL,
+    mode_paiement VARCHAR(50) NOT NULL,
+    statut_commande VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur),
+    FOREIGN KEY (id_panier) REFERENCES Panier(id_panier)
+);
+
+SET FOREIGN_KEY_CHECKS = 1;
