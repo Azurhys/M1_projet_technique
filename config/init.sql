@@ -86,8 +86,21 @@ CREATE TABLE Utilisateur (
     email VARCHAR(255) NOT NULL UNIQUE,
     mot_de_passe VARCHAR(255) NOT NULL,
     adresse TEXT,
-    telephone VARCHAR(20)
+    telephone VARCHAR(20),
+    droit INT NOT NULL
 );
+
+INSERT INTO Utilisateur (nom, prenom, email, mot_de_passe, adresse, telephone, droit) VALUES
+('Admin', 'User', 'admin@example.com', 'password123', '123 Admin St, Paris, France', '1234567890', 1),
+('John', 'Doe', 'amerpillat@gmail.com', 'password123', '456 User Ave, Paris, France', '0987654321', 0),
+('Jane', 'Doe', 'jane.doe@example.com', 'password123', '789 User Blvd, Paris, France', '1122334455', 0),
+('Alice', 'Smith', 'alice.smith@example.com', 'password123', '321 User Ln, Paris, France', '6677889900', 0),
+('Bob', 'Brown', 'bob.brown@example.com', 'password123', '654 User Rd, Paris, France', '4455667788', 0),
+('Charlie', 'Johnson', 'charlie.johnson@example.com', 'password123', '987 User St, Paris, France', '2233445566', 0),
+('Eve', 'Davis', 'eve.davis@example.com', 'password123', '159 User Pl, Paris, France', '7788990011', 0),
+('Mallory', 'Evans', 'mallory.evans@example.com', 'password123', '753 User Dr, Paris, France', '3344556677', 0),
+('Trent', 'Miller', 'trent.miller@example.com', 'password123', '951 User Ct, Paris, France', '5566778899', 0),
+('Peggy', 'Taylor', 'peggy.taylor@example.com', 'password123', '147 User Pkwy, Paris, France', '9988776655', 0);
 
 -- Table Panier
 CREATE TABLE Panier (
@@ -98,6 +111,10 @@ CREATE TABLE Panier (
     total DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
 );
+
+INSERT INTO Panier (id_utilisateur, date_creation, statut, total) VALUES
+(1, '2024-07-15 12:00:00', 'En cours', 199.99),
+(2, '2024-07-16 13:00:00', 'En cours', 149.99);
 
 -- Table Panier_Produit
 CREATE TABLE Panier_Produit (
