@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const DetailsArticles = () => {
     const { IDProduit } = useParams();
@@ -43,39 +44,52 @@ const DetailsArticles = () => {
 
     return (
         <div className="container mt-4">
-            <div className="row justify-content-center align-items-center">
+            <h2 className='text-center mt-5'>{product.nom}</h2>
+            <div className="row justify-content-center align-items-center" style={{height: '700px'}}>
                 <div className="col-md-6">
-                    <h2 className='text-center mb-5'>{product.nom}</h2>
                     <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">
                         <div className="carousel-inner">
                             {carouselImages.map((imageUrl, index) => (
                                 <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                    <img src={imageUrl} className="d-block w-100" alt={`Slide ${index + 1}`} />
+                                    <img src={imageUrl} className="d-block w-100" style={{height: '10%'}} alt={`Slide ${index + 1}`} />
                                 </div>
                             ))}
                         </div>
-                        <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <button
+                            className="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#carouselExampleIndicators"
+                            data-bs-slide="prev"
+                            style={{ filter: 'invert(1)' }} // Change arrow color to white
+                        >
                             <span className="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span className="visually-hidden">Previous</span>
                         </button>
-                        <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <button
+                            className="carousel-control-next"
+                            type="button"
+                            data-bs-target="#carouselExampleIndicators"
+                            data-bs-slide="next"
+                            style={{ filter: 'invert(1)' }} // Change arrow color to white
+                        >
                             <span className="carousel-control-next-icon" aria-hidden="true"></span>
                             <span className="visually-hidden">Next</span>
                         </button>
                     </div>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-6 align-items-center">
                     <div className="card shadow-sm">
                         <div className="card-body">
-                            <h3 className="card-title">{product.nom}</h3>
-                            <p className="card-text"><strong>Description:</strong> {product.description}</p>
                             <p className="card-text"><strong>Prix:</strong> {product.prix}€</p>
+                            <p className="card-text"><strong>Description:</strong> {product.description}</p>
                             {product.stock > 0 ?
                                 <p className="card-text text-success"><strong>En stock</strong></p>
                                 :
                                 <p className="card-text text-danger"><strong>Hors stock</strong></p>
                             }
-                            <button className="btn btn-primary mt-3">Ajouter au panier</button>
+                            <button className="btn btn-primary mt-3">
+                                <FaShoppingCart className="me-2" /> Ajouter au panier
+                            </button>
                         </div>
                     </div>
                 </div>
