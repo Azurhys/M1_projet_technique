@@ -71,7 +71,13 @@ const Articles = () => {
             <div className="row">
                 {filteredProducts.map(product => (
                     <div key={product.id_produit} className="col-md-4 mb-4">
-                        <div className="card h-100 d-flex flex-column" onClick={() => {navigate(`/details-article/${product.id_produit}`)}}>
+                        <div
+                            className="card h-100 d-flex flex-column shadow-sm"
+                            onClick={() => navigate(`/details-article/${product.id_produit}`)}
+                            style={{ transition: 'transform 0.5s, box-shadow 0.5s' }}
+                            onMouseEnter={(e) => e.currentTarget.classList.add('shadow-lg')}
+                            onMouseLeave={(e) => e.currentTarget.classList.remove('shadow-lg')}
+                        >
                             <div className="d-flex justify-content-center align-items-center" style={{ height: '300px', overflow: 'hidden' }}>
                                 <img
                                     src={`http://localhost:3000/image/${product.id_produit}-1.jpg`}
@@ -93,7 +99,6 @@ const Articles = () => {
                                         <p className="card-text text-danger"><strong>Hors stock</strong></p>
                                     )
                                 }
-                                <button className="btn btn-primary mt-auto">Ajouter au panier</button>
                             </div>
                         </div>
                     </div>
