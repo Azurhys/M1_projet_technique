@@ -72,7 +72,7 @@ const Articles = () => {
                         <div className="card h-100 d-flex flex-column">
                             <div className="d-flex justify-content-center align-items-center" style={{ height: '300px', overflow: 'hidden' }}>
                                 <img
-                                    src={`../../images/${product.id_produit}-1.jpg`}
+                                    src={`http://localhost:3000/image/${product.id_produit}-1.jpg`}
                                     className="card-img-top"
                                     alt={product.nom}
                                     style={{ height: '80%', width: 'auto' }}

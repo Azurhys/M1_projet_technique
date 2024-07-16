@@ -8,6 +8,8 @@ var cors = require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var produitsRouter = require('./routes/produits');
+var imageRouter = require('./routes/image');
+var downloadRouter = require('./routes/download');
 var categoriesRouter = require('./routes/categories')
 var paniersRouter = require("./routes/paniers")
 var panierProduitsRouter = require('./routes/panierProduits')
@@ -26,10 +28,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/produits', produitsRouter);
+app.use('/image', imageRouter);
+app.use('/download', downloadRouter);
 app.use('/categories', categoriesRouter);
 app.use('/commandes', commandesRouter)
 app.use('/paniers', paniersRouter)
