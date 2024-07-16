@@ -8,7 +8,7 @@ const Articles = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://localhost:3000/');
+                const response = await fetch('http://localhost:3000/produits');
                 const data = await response.json();
                 setProducts(data);
             } catch (error) {
@@ -39,17 +39,18 @@ const Articles = () => {
             <div className="row">
                 {filteredProducts.map(product => (
                     <div key={product.id_produit} className="col-md-4 mb-4">
-                        <div className="card h-100">
-                            <img
-                                src={`../../images/${product.id_produit}-1.jpg`}
-                                className="card-img-top"
-                                alt={product.nom}
-                                height={200}
-                                width={'auto'}
-                            />
-                            <div className="card-body">
+                        <div className="card h-100 d-flex flex-column">
+                            <div className="d-flex justify-content-center align-items-center" style={{ height: '300px', width: 'auto', overflow: 'hidden' }}>
+                                <img
+                                    src={`../../images/${product.id_produit}-1.jpg`}
+                                    className="card-img-top"
+                                    alt={product.nom}
+                                    style={{ height: '80%', width: 'auto'}}
+                                />
+                            </div>
+                            <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">{product.nom}</h5>
-                                <p className="card-text">{product.description}</p>
+                                <p className="card-text flex-grow-1">{product.description}</p>
                                 <p className="card-text"><strong>Prix:</strong> {product.prix}€</p>
                                 {product.stock > 0 ?
                                     (
@@ -60,7 +61,7 @@ const Articles = () => {
                                         <p className="card-text text-danger"><strong>Hors stock</strong></p>
                                     )
                                 }
-                                <button className="btn btn-primary">Ajouter au panier</button>
+                                <button className="btn btn-primary mt-auto">Ajouter au panier</button>
                             </div>
                         </div>
                     </div>
