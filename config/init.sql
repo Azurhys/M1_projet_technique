@@ -1,3 +1,7 @@
+DROP DATABASE IF EXISTS ecommerce;
+
+CREATE DATABASE ecommerce;
+
 USE ecommerce;
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -74,5 +78,50 @@ INSERT INTO Produit (nom, description, prix, stock, image_url, id_categorie) VAL
 ('Cafetière Filtre Moulinex', 'Cafetière filtre Moulinex avec capacité de 1.25 litres et fonction maintien au chaud.', 39.99, 40, 'image_url23.jpg', 11),
 ('Sèche-cheveux Remington', 'Sèche-cheveux Remington avec moteur AC de 2200 W et 3 réglages de température.', 49.99, 30, 'image_url24.jpg', 3),
 ('Chargeur Sans Fil Anker', 'Chargeur sans fil Anker compatible avec la charge rapide Qi et sortie 10W.', 24.99, 50, 'image_url25.jpg', 3);
+
+CREATE TABLE Utilisateur (
+    id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    prenom VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    adresse TEXT,
+    telephone VARCHAR(20)
+);
+
+-- Table Panier
+CREATE TABLE Panier (
+    id_panier INT AUTO_INCREMENT PRIMARY KEY,
+    id_utilisateur INT,
+    date_creation DATETIME NOT NULL,
+    statut VARCHAR(50) NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+);
+
+-- Table Panier_Produit
+CREATE TABLE Panier_Produit (
+    id_panier INT,
+    id_produit INT,
+    quantite INT,
+    PRIMARY KEY (id_panier, id_produit),
+    FOREIGN KEY (id_panier) REFERENCES Panier(id_panier),
+    FOREIGN KEY (id_produit) REFERENCES Produit(id_produit)
+);
+
+-- Table Commande
+CREATE TABLE Commande (
+    id_commande INT AUTO_INCREMENT PRIMARY KEY,
+    id_utilisateur INT,
+    id_panier INT,
+    date_commande DATETIME NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    adresse_livraison TEXT NOT NULL,
+    adresse_facturation TEXT NOT NULL,
+    mode_paiement VARCHAR(50) NOT NULL,
+    statut_commande VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur),
+    FOREIGN KEY (id_panier) REFERENCES Panier(id_panier)
+);
 
 SET FOREIGN_KEY_CHECKS = 1;
