@@ -14,6 +14,9 @@ var categoriesRouter = require('./routes/categories')
 var paniersRouter = require("./routes/paniers")
 var panierProduitsRouter = require('./routes/panierProduits')
 var commandesRouter = require('./routes/commandes')
+const authRouter = require('./routes/auth');
+const authMiddleware = require('./middleware/auth');
+const checkRole = require('./middleware/roles')
 
 var app = express();
 
@@ -31,14 +34,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users',authMiddleware,checkRole([1]), usersRouter);
 app.use('/produits', produitsRouter);
 app.use('/image', imageRouter);
-app.use('/download', downloadRouter);
+app.use('/download', authMiddleware, downloadRouter);
 app.use('/categories', categoriesRouter);
-app.use('/commandes', commandesRouter)
-app.use('/paniers', paniersRouter)
-app.use('/panierProduits', panierProduitsRouter)
+app.use('/commandes',authMiddleware, commandesRouter)
+app.use('/paniers', authMiddleware, paniersRouter)
+app.use('/panierProduits',authMiddleware, panierProduitsRouter)
+app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
