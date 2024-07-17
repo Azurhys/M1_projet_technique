@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const RecapPanier = () => {
     const [cartItems, setCartItems] = useState([]);
+    const navigate = useNavigate();
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    const userId = 1; // Remplacez par l'ID utilisateur actuel
 
     useEffect(() => {
-        const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
         setCartItems(savedCart);
     }, []);
 
@@ -19,51 +22,121 @@ const RecapPanier = () => {
     const handlePasserCommande = async () => {
         try {
             const total = calculateCartTotal();
-            const newCart = {
-                id_utilisateur: 1, // Vous pouvez remplacer par l'ID utilisateur actuel
-                date_creation: new Date().toISOString(),
-                statut: 'En cours',
-                total
-            };
+            let panierId;
 
-            // Ajouter le panier
-            const responsePanier = await fetch('http://localhost:3000/paniers/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newCart),
-            });
+            // Vérifier si l'utilisateur a déjà un panier
+            const responseGetPanier = await fetch(`http://localhost:3000/paniers`);
+            if (responseGetPanier.ok) {
+                const paniers = await responseGetPanier.json();
+                const existingPanier = paniers.find(panier => panier.id_utilisateur === userId);
 
-            if (responsePanier.ok) {
-                const panier = await responsePanier.json();
-                const panierId = panier.id_panier;
+                if (existingPanier) {
+                    // L'utilisateur a déjà un panier
+                    panierId = existingPanier.id_panier;
 
-                // Ajouter les produits dans Panier_Produit
-                for (const item of cartItems) {
-                    const newCartProduct = {
-                        id_panier: panierId,
-                        id_produit: item.id,
-                        quantite: item.quantity
+                    // Récupérer les produits actuels du panier depuis la base de données
+                    const responseGetPanierProduits = await fetch(`http://localhost:3000/panierProduits/${panierId}`);
+                    if (responseGetPanierProduits.ok) {
+                        const panierProduits = await responseGetPanierProduits.json();
+
+                        if (Array.isArray(panierProduits)) {
+                            // Mettre à jour ou ajouter les produits existants dans le panier
+                            for (const item of cartItems) {
+                                const panierProduit = panierProduits.find(p => p.id_produit === item.id);
+                                if (panierProduit) {
+                                    const responsePanierProduit = await fetch(`http://localhost:3000/panierProduits/put/${panierId}/${item.id}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ quantite: item.quantity }),
+                                    });
+                                    if (!responsePanierProduit.ok) {
+                                        console.error(`Erreur de mise à jour du produit ${item.id} dans le panier ${panierId}`);
+                                    }
+                                } else {
+                                    await fetch('http://localhost:3000/panierProduits/add', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                            id_panier: panierId,
+                                            id_produit: item.id,
+                                            quantite: item.quantity
+                                        }),
+                                    });
+                                }
+                            }
+
+                            // Supprimer les produits absents dans le panier local
+                            for (const panierProduit of panierProduits) {
+                                const foundInCart = savedCart.find(item => item.id == panierProduit.id_produit);
+                                console.log(panierProduit);
+                                console.log(cartItems);
+                                console.log(foundInCart);
+                                if (!foundInCart) {
+                                    console.log(`Suppression du produit ${panierProduit.id_produit} du panier ${panierId}`);
+                                    await fetch(`http://localhost:3000/panierProduits/delete/${panierId}/${panierProduit.id_produit}`, {
+                                        method: 'DELETE',
+                                    });
+                                }
+                            }
+                        } else {
+                            alert('La réponse des produits du panier n\'est pas valide');
+                            return;
+                        }
+                    } else {
+                        alert('Erreur lors de la récupération des produits du panier');
+                        return;
+                    }
+                } else {
+                    // L'utilisateur n'a pas de panier, créez-en un nouveau
+                    const newCart = {
+                        id_utilisateur: userId,
+                        date_creation: new Date().toISOString(),
+                        statut: 'En cours',
+                        total
                     };
 
-                    const responsePanierProduit = await fetch('http://localhost:3000/panierProduits/add', {
+                    const responsePanier = await fetch('http://localhost:3000/paniers/add', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(newCartProduct),
+                        body: JSON.stringify(newCart),
                     });
 
-                    if (!responsePanierProduit.ok) {
-                        throw new Error('Erreur lors de l\'ajout d\'un produit au panier');
+                    if (responsePanier.ok) {
+                        const panier = await responsePanier.json();
+                        panierId = panier.id_panier;
+
+                        // Ajouter les produits dans Panier_Produit
+                        for (const item of cartItems) {
+                            await fetch('http://localhost:3000/panierProduits/add', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    id_panier: panierId,
+                                    id_produit: item.id,
+                                    quantite: item.quantity
+                                }),
+                            });
+                        }
+                    } else {
+                        alert('Erreur lors de la création du panier');
+                        return;
                     }
                 }
-
-                alert('Commande réussie!');
             } else {
-                alert('Erreur lors de la création du panier');
+                alert('Erreur lors de la vérification des paniers');
+                return;
             }
+
+            alert('Commande réussie!');
+            navigate('/commande');
         } catch (error) {
             console.error('Erreur:', error);
             alert('Erreur lors de la commande');
@@ -71,33 +144,40 @@ const RecapPanier = () => {
     };
 
     return (
-        <div className="container my-5">
-            <h2 className="text-center mb-4">Récapitulatif du Panier</h2>
-            <ul className="list-group">
-                {cartItems.map(product => (
-                    <li key={product.id} className="list-group-item d-flex justify-content-between align-items-center">
-                        <div className="d-flex align-items-center">
-                            <img
-                                src={`http://localhost:3000/image/${product.id}-1.jpg`}
-                                className="img-fluid rounded"
-                                alt={product.name}
-                                style={{ maxHeight: '100px', maxWidth: '100px', marginRight: '20px' }}
-                            />
-                            <div>
-                                <h5>{product.name}</h5>
-                                <p>Prix unitaire: {product.price.toFixed(2)}€</p>
-                                <p>Quantité: {product.quantity}</p>
-                                <p>Total: {calculateProductTotal(product).toFixed(2)}€</p>
+        cartItems.length > 0 ? (
+            <div className="container my-5">
+                <h2 className="text-center mb-4">Récapitulatif du Panier</h2>
+                <ul className="list-group">
+                    {cartItems.map(product => (
+                        <li key={product.id} className="list-group-item d-flex justify-content-between align-items-center">
+                            <div className="d-flex align-items-center">
+                                <img
+                                    src={`http://localhost:3000/image/${product.id}-1.jpg`}
+                                    className="img-fluid rounded"
+                                    alt={product.name}
+                                    style={{ maxHeight: '100px', maxWidth: '100px', marginRight: '20px' }}
+                                />
+                                <div>
+                                    <h5>{product.name}</h5>
+                                    <p>Prix unitaire: {product.price.toFixed(2)}€</p>
+                                    <p>Quantité: {product.quantity}</p>
+                                    <p>Total: {calculateProductTotal(product).toFixed(2)}€</p>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            <div className='d-flex justify-content-between mt-5'>
-                <p>Total Panier : <b>{calculateCartTotal().toFixed(2)}€</b></p>
-                <button className="btn btn-primary" onClick={handlePasserCommande}>Passer à la commande</button>
+                        </li>
+                    ))}
+                </ul>
+                <div className='d-flex justify-content-between mt-5'>
+                    <p>Total Panier : <b>{calculateCartTotal().toFixed(2)}€</b></p>
+                    <button className="btn btn-primary" onClick={handlePasserCommande}>Passer à la commande</button>
+                </div>
             </div>
-        </div>
+        ) :
+            (
+                <div className="text-center mt-5">
+                    <h3>Votre panier est vide 😞</h3>
+                </div>
+            )
     );
 };
 

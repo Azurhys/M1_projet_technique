@@ -40,8 +40,8 @@ app.use('/image', imageRouter);
 app.use('/download', authMiddleware, downloadRouter);
 app.use('/categories', categoriesRouter);
 app.use('/commandes',authMiddleware, commandesRouter)
-app.use('/paniers', authMiddleware, paniersRouter)
-app.use('/panierProduits',authMiddleware, panierProduitsRouter)
+app.use('/paniers', paniersRouter)
+app.use('/panierProduits', panierProduitsRouter)
 app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
