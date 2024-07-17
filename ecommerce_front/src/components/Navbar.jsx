@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
-import { FaHome, FaDollyFlatbed , FaSignInAlt, FaShoppingCart } from 'react-icons/fa';
+import { FaHome, FaDollyFlatbed , FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
     const { auth, user, logout } = useContext(AuthContext);
@@ -49,7 +49,7 @@ const Navbar = () => {
                         <NavLink to="/panier" className={({ isActive }) => {
                             return isActive ? "nav-link active fs-2" : "nav-link fs-2";
                         }}>
-                            <FaDollyFlatbed  className="me-2" /> Panier
+                            <FaShoppingCart  className="me-2" /> Panier
                         </NavLink>
                     </li>
                 </ul>
