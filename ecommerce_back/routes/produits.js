@@ -4,7 +4,7 @@ const db = require('../config/db');
 const Product = require('../models/produit');
 
 //POST
-router.post('/add', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   const { nom, description, prix, stock, image_url, id_categorie } = req.body;
   try {
     const [result] = await db.query(
@@ -19,7 +19,7 @@ router.post('/add', async (req, res, next) => {
 });
 
 //PUT
-router.put('/put/:id_produit', async (req, res, next) => {
+router.put('/:id_produit', async (req, res, next) => {
   const { id_produit } = req.params;
   const { nom, description, prix, stock, image_url, id_categorie } = req.body;
   try {
@@ -34,7 +34,7 @@ router.put('/put/:id_produit', async (req, res, next) => {
 });
 
 //DELETE
-router.delete('/delete/:id_produit', async (req, res, next) => {
+router.delete('/:id_produit', async (req, res, next) => {
   const { id_produit } = req.params;
   try {
     await db.query('DELETE FROM Produit WHERE id_produit = ?', [id_produit]);

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
@@ -16,10 +15,16 @@ const ProductForm = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const productsResponse = await axios.get('http://localhost:3000/produits');
-      const categoriesResponse = await axios.get('http://localhost:3000/categories');
-      setProducts(productsResponse.data);
-      setCategories(categoriesResponse.data);
+      try {
+        const productsResponse = await fetch('http://localhost:3000/produits');
+        const productsData = await productsResponse.json();
+        const categoriesResponse = await fetch('http://localhost:3000/categories');
+        const categoriesData = await categoriesResponse.json();
+        setProducts(productsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
     };
     fetchData();
   }, []);
@@ -31,22 +36,39 @@ const ProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (product.id_produit) {
-      await axios.put(`http://localhost:3000/produits/${product.id_produit}`, product);
-    } else {
-      await axios.post('http://localhost:3000/produits', product);
+    try {
+      if (product.id_produit) {
+        await fetch(`http://localhost:3000/produits/${product.id_produit}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(product)
+        });
+      } else {
+        await fetch('http://localhost:3000/produits', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(product)
+        });
+      }
+      setProduct({
+        id_produit: '',
+        nom: '',
+        description: '',
+        prix: '',
+        stock: '',
+        id_categorie: '',
+        image_url: ''
+      });
+      const productsResponse = await fetch('http://localhost:3000/produits');
+      const productsData = await productsResponse.json();
+      setProducts(productsData);
+    } catch (error) {
+      console.error("Erreur lors de la soumission du formulaire :", error);
     }
-    setProduct({
-      id_produit: '',
-      nom: '',
-      description: '',
-      prix: '',
-      stock: '',
-      id_categorie: '',
-      image_url: ''
-    });
-    const productsResponse = await axios.get('http://localhost:3000/produits');
-    setProducts(productsResponse.data);
   };
 
   const handleEdit = (product) => {
@@ -54,8 +76,14 @@ const ProductForm = () => {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:3000/produits/${id}`);
-    setProducts(products.filter((product) => product.id_produit !== id));
+    try {
+      await fetch(`http://localhost:3000/produits/${id}`, {
+        method: 'DELETE'
+      });
+      setProducts(products.filter((product) => product.id_produit !== id));
+    } catch (error) {
+      console.error("Erreur lors de la suppression du produit :", error);
+    }
   };
 
   return (
@@ -110,24 +138,23 @@ const ProductForm = () => {
         <div className="form-group">
           <label>Catégorie</label>
           {categories.length > 0 ? (
-                <select
-                    className="form-control"
-                    name="id_categorie"
-                    value={product.id_categorie}
-                    onChange={handleChange}
-                    required
-                >
-                    <option value="">Sélectionnez une catégorie</option>
-                    {categories.map((category) => (
-                    <option key={category.id_categorie} value={category.id_categorie}>
-                        {category.nom}
-                    </option>
-                    ))}
-                </select>
-                ) : (
-                <p>Chargement des catégories...</p>
-                )}
-
+            <select
+              className="form-control"
+              name="id_categorie"
+              value={product.id_categorie}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Sélectionnez une catégorie</option>
+              {categories.map((category) => (
+                <option key={category.id_categorie} value={category.id_categorie}>
+                  {category.nom}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <p>Chargement des catégories...</p>
+          )}
         </div>
         <div className="form-group">
           <label>Image URL</label>

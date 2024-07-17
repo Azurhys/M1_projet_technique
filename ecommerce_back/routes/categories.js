@@ -1,12 +1,10 @@
-// routes/categories.js
-
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const Category = require('../models/categorie');
 
 //ADD
-router.post('/add', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   const { nom, id_categorie_parent } = req.body;
   try {
     const [result] = await db.query(
@@ -21,7 +19,7 @@ router.post('/add', async (req, res, next) => {
 });
 
 //PUT
-router.put('/put/:id_categorie', async (req, res, next) => {
+router.put('/:id_categorie', async (req, res, next) => {
   const { id_categorie } = req.params;
   const { nom, id_categorie_parent } = req.body;
   try {
@@ -36,7 +34,7 @@ router.put('/put/:id_categorie', async (req, res, next) => {
 });
 
 //DELETE
-router.delete('/delete/:id_categorie', async (req, res, next) => {
+router.delete('/:id_categorie', async (req, res, next) => {
   const { id_categorie } = req.params;
   try {
     await db.query('DELETE FROM Categorie WHERE id_categorie = ?', [id_categorie]);

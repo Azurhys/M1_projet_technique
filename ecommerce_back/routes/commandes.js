@@ -6,7 +6,7 @@ const sendOrderSummary = require('../utils/sendEmail');
 const getUserEmail = require('../utils/getUserEmail');
 
 //ADD
-router.post('/add', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   const { id_utilisateur, id_panier, date_commande, total, adresse_livraison, adresse_facturation, mode_paiement, statut_commande } = req.body;
   try {
     const [result] = await db.query(
@@ -58,7 +58,7 @@ router.get('/:id_commande', async (req, res, next) => {
 });
 
 //PUT
-router.put('/put/:id_commande', async (req, res, next) => {
+router.put('/:id_commande', async (req, res, next) => {
   const { id_commande } = req.params;
   const { id_utilisateur, id_panier, date_commande, total, adresse_livraison, adresse_facturation, mode_paiement, statut_commande } = req.body;
   try {
@@ -73,7 +73,7 @@ router.put('/put/:id_commande', async (req, res, next) => {
 });
 
 //DELETE
-router.delete('/delete/:id_commande', async (req, res, next) => {
+router.delete('/:id_commande', async (req, res, next) => {
   const { id_commande } = req.params;
   try {
     await db.query('DELETE FROM Commande WHERE id_commande = ?', [id_commande]);
