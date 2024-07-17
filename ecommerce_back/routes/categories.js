@@ -1,42 +1,34 @@
-// routes/categories.js
-
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const Category = require('../models/categorie');
 
-//ADD
-router.post('/add', async (req, res, next) => {
-  const { nom, id_categorie_parent } = req.body;
+// ADD a category
+router.post('/', async (req, res, next) => {
+  const { nom } = req.body;
   try {
-    const [result] = await db.query(
-      'INSERT INTO Categorie (nom, id_categorie_parent) VALUES (?, ?)',
-      [nom, id_categorie_parent]
-    );
-    const newCategory = new Category(result.insertId, nom, id_categorie_parent);
+    const [result] = await db.query('INSERT INTO Categorie (nom) VALUES (?)', [nom]);
+    const newCategory = new Category(result.insertId, nom);
     res.status(201).json(newCategory);
   } catch (err) {
     next(err);
   }
 });
 
-//PUT
-router.put('/put/:id_categorie', async (req, res, next) => {
+// UPDATE a category
+router.put('/:id_categorie', async (req, res, next) => {
   const { id_categorie } = req.params;
-  const { nom, id_categorie_parent } = req.body;
+  const { nom } = req.body;
   try {
-    await db.query(
-      'UPDATE Categorie SET nom = ?, id_categorie_parent = ? WHERE id_categorie = ?',
-      [nom, id_categorie_parent, id_categorie]
-    );
-    res.status(200).json({ id_categorie, nom, id_categorie_parent });
+    await db.query('UPDATE Categorie SET nom = ? WHERE id_categorie = ?', [nom, id_categorie]);
+    res.status(200).json({ id_categorie, nom });
   } catch (err) {
     next(err);
   }
 });
 
-//DELETE
-router.delete('/delete/:id_categorie', async (req, res, next) => {
+// DELETE a category
+router.delete('/:id_categorie', async (req, res, next) => {
   const { id_categorie } = req.params;
   try {
     await db.query('DELETE FROM Categorie WHERE id_categorie = ?', [id_categorie]);
@@ -46,7 +38,7 @@ router.delete('/delete/:id_categorie', async (req, res, next) => {
   }
 });
 
-//GET ALL
+// GET all categories
 router.get('/', async (req, res, next) => {
   try {
     const [rows] = await db.query('SELECT * FROM Categorie');
@@ -56,7 +48,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-//GET ONE
+// GET one category
 router.get('/:id_categorie', async (req, res, next) => {
   const { id_categorie } = req.params;
   try {

@@ -16,28 +16,38 @@ DROP TABLE IF EXISTS Categorie;
 CREATE TABLE Categorie (
     id_categorie INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
-    id_categorie_parent INT,
-    FOREIGN KEY (id_categorie_parent) REFERENCES Categorie(id_categorie)
+);
+
+CREATE TABLE SousCategories (
+    id_souscategorie INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    id_categorie INT,
+    FOREIGN KEY (id_categorie) REFERENCES Categorie(id_categorie)
 );
 
 -- Insérer des catégories
-INSERT INTO Categorie (nom, id_categorie_parent) VALUES
-('Informatique', NULL),
-('Électronique', NULL),
-('Appareils Électroménagers', NULL),
-('Ordinateurs', 1),
-('Smartphones', 1),
-('Périphériques', 1),
-('Télévisions', 2),
-('Audio', 2),
-('Réfrigérateurs', 3),
-('Lave-linge', 3),
-('Cuisine', 3),
-('Climatisation', 3),
-('Sécurité', 3),
-('Réseau', 3),
-('Montres', 2),
-('Stockage', 1);
+INSERT INTO Categorie (nom) VALUES
+('Informatique'),
+('Électronique'),
+('Appareils Électroménagers');
+
+
+INSERT INTO SousCategories (nom, id_categorie) VALUES
+('Ordinateurs', (SELECT id_categorie FROM Categorie WHERE nom = 'Informatique')),
+('Smartphones', (SELECT id_categorie FROM Categorie WHERE nom = 'Informatique')),
+('Périphériques', (SELECT id_categorie FROM Categorie WHERE nom = 'Informatique')),
+('Télévisions', (SELECT id_categorie FROM Categorie WHERE nom = 'Électronique')),
+('Audio', (SELECT id_categorie FROM Categorie WHERE nom = 'Électronique')),
+('Réfrigérateurs', (SELECT id_categorie FROM Categorie WHERE nom = 'Appareils Électroménagers')),
+('Lave-linge', (SELECT id_categorie FROM Categorie WHERE nom = 'Appareils Électroménagers')),
+('Cuisine', (SELECT id_categorie FROM Categorie WHERE nom = 'Appareils Électroménagers')),
+('Climatisation', (SELECT id_categorie FROM Categorie WHERE nom = 'Appareils Électroménagers')),
+('Sécurité', (SELECT id_categorie FROM Categorie WHERE nom = 'Appareils Électroménagers')),
+('Réseau', (SELECT id_categorie FROM Categorie WHERE nom = 'Appareils Électroménagers')),
+('Montres', (SELECT id_categorie FROM Categorie WHERE nom = 'Électronique')),
+('Stockage', (SELECT id_categorie FROM Categorie WHERE nom = 'Informatique'));
+
+
 
 -- Créer la table Produit
 CREATE TABLE Produit (

@@ -9,7 +9,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [adresse, setAdresse] = useState('');
   const [telephone, setTelephone] = useState('');
-  const [droit, setDroit] = useState(0); // Par défaut, droit à 1 (par exemple utilisateur)
+  const [droit, setDroit] = useState(0); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();

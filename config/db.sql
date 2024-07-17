@@ -8,8 +8,13 @@ USE ecommerce;
 CREATE TABLE Categorie (
     id_categorie INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
-    id_categorie_parent INT,
-    FOREIGN KEY (id_categorie_parent) REFERENCES Categorie(id_categorie)
+);
+
+CREATE TABLE SousCategories (
+    id_souscategorie INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    id_categorie INT,
+    FOREIGN KEY (id_categorie) REFERENCES Categorie(id_categorie)
 );
 
 -- Table Produit

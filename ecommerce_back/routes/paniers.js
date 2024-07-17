@@ -4,7 +4,7 @@ const db = require('../config/db');
 const Cart = require('../models/panier');
 
 //ADD
-router.post('/add', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   const { id_utilisateur, date_creation, statut, total } = req.body;
   try {
     const [result] = await db.query(
@@ -44,7 +44,7 @@ router.get('/:id_panier', async (req, res, next) => {
 });
 
 //PUT
-router.put('/put/:id_panier', async (req, res, next) => {
+router.put('/:id_panier', async (req, res, next) => {
   const { id_panier } = req.params;
   const { id_utilisateur, date_creation, statut, total } = req.body;
   try {
@@ -59,7 +59,7 @@ router.put('/put/:id_panier', async (req, res, next) => {
 });
 
 //DELETE
-router.delete('/delete/:id_panier', async (req, res, next) => {
+router.delete('/:id_panier', async (req, res, next) => {
   const { id_panier } = req.params;
   try {
     await db.query('DELETE FROM Panier WHERE id_panier = ?', [id_panier]);
