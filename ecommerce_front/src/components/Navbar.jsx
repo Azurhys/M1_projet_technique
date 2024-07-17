@@ -1,6 +1,10 @@
-import { NavLink } from "react-router-dom";
+import React, { useContext } from 'react';
+import { NavLink } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
 const Navbar = () => {
+    const { auth, user, logout } = useContext(AuthContext);
+
     return (
         <div className="bg-sombre mb-0 ">
             <nav className="navbar navbar-expand navbar-dark container ">
@@ -15,11 +19,27 @@ const Navbar = () => {
                             return isActive ? "nav-link active fs-2" : "nav-link fs-2"
                         }}> Articles </NavLink>
                     </li>
-                    <li className="nav-item">
-                        <NavLink to="/login" className={({isActive}) => {
-                            return isActive ? "nav-link active fs-2" : "nav-link fs-2"
-                        }}> Se Connecter </NavLink>
-                    </li>
+                    {auth ? (
+                        <>
+                        <li className="nav-item">
+                            <span className="nav-link fs-2">Bienvenue, {user ? user.prenom : 'Chargement...'}</span>
+                        </li>
+                        <li className="nav-item">
+                            <button className="btn btn-secondary fs-2" onClick={logout}>
+                            Se Déconnecter
+                            </button>
+                        </li>
+                        </>
+                    ) : (
+                        <li className="nav-item">
+                        <NavLink
+                            to="/login"
+                            className={({ isActive }) => (isActive ? 'nav-link active fs-2' : 'nav-link fs-2')}
+                        >
+                            Se Connecter
+                        </NavLink>
+                        </li>
+                    )}
                 </ul>
             </nav>
         </div>
