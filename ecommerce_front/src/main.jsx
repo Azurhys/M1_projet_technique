@@ -8,6 +8,7 @@ import './app.css'
 import Articles from './pages/Articles.jsx';
 import Login from './pages/Login.jsx';
 import DetailsArticles from './pages/DetailsArticle.jsx';
+import Panier from './pages/Panier.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="/articles" element={<Articles  />} /> 
             <Route path="/login" element={<Login />} />
             <Route path="/details-article/:IDProduit" element={<DetailsArticles />} />
+            <Route path="/panier" element={<Panier />} />
           </Route>    
         </Routes>
   </BrowserRouter>
