@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const Panier = () => {
     const [cart, setCart] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -58,9 +60,9 @@ const Panier = () => {
                             </li>
                         ))}
                     </ul>
-                    <div className='d-flex justify-content-between'>
-                        <p className="mt-3">Total Panier : <b>{calculateCartTotal().toFixed(2)}€</b></p>
-                        <button className='btn btn-primary mt-3 px-5'>Valider</button>
+                    <div className='d-flex justify-content-between mt-5'>
+                        <p>Total Panier : <b>{calculateCartTotal().toFixed(2)}€</b></p>
+                        <button className='btn btn-primary px-5' onClick={() => navigate("/recap-panier")}>Valider</button>
                     </div>
                 </div>
             ) : (

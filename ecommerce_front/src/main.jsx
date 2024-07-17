@@ -9,6 +9,7 @@ import Articles from './pages/Articles.jsx';
 import Login from './pages/Login.jsx';
 import DetailsArticles from './pages/DetailsArticle.jsx';
 import Panier from './pages/Panier.jsx';
+import RecapPanier from './pages/RecapPanier.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="/login" element={<Login />} />
             <Route path="/details-article/:IDProduit" element={<DetailsArticles />} />
             <Route path="/panier" element={<Panier />} />
+            <Route path="/recap-panier" element={<RecapPanier />} />
           </Route>    
         </Routes>
   </BrowserRouter>
