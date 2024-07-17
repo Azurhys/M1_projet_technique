@@ -10,18 +10,23 @@ import Login from './pages/Login.jsx';
 import DetailsArticles from './pages/DetailsArticle.jsx';
 import Panier from './pages/Panier.jsx';
 import RecapPanier from './pages/RecapPanier.jsx';
+import { AuthProvider } from './contexts/AuthContext.jsx';
+import Register from './pages/Register.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<App />}> 
-            <Route index element={<Home />} />
-            <Route path="/articles" element={<Articles  />} /> 
-            <Route path="/login" element={<Login />} />
-            <Route path="/details-article/:IDProduit" element={<DetailsArticles />} />
-            <Route path="/panier" element={<Panier />} />
+  <AuthProvider>
+    <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<App />}> 
+              <Route index element={<Home />} />
+              <Route path="/articles" element={<Articles  />} /> 
+              <Route path="/login" element={<Login />} />
+              <Route path='/register' element={<Register />} />
+              <Route path="/details-article/:IDProduit" element={<DetailsArticles />} />
+              <Route path="/panier" element={<Panier />} />
             <Route path="/recap-panier" element={<RecapPanier />} />
           </Route>    
-        </Routes>
-  </BrowserRouter>
+          </Routes>
+    </BrowserRouter>
+  </AuthProvider>
 )

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const User = require('../models/user');
+const authMiddleware = require('../middleware/auth')
 
 //RESGISTER
 router.post('/register', async (req, res, next) => {
@@ -46,8 +47,10 @@ router.post('/login', async (req, res, next) => {
 
     const tokenPayload = {
         id_utilisateur: user[0].id_utilisateur,
-        role: user[0].droit,
-        email: user[0].email
+        nom: user[0].nom,
+        prenom: user[0].prenom,
+        email: user[0].email,
+        droit: user[0].droit
       };
 
       const token = jwt.sign(
@@ -60,6 +63,11 @@ router.post('/login', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+// ROUTE POUR RÉCUPÉRER LES INFORMATIONS DE L'UTILISATEUR CONNECTÉ
+router.get('/me', authMiddleware, (req, res) => {
+  res.json(req.user);
 });
 
 module.exports = router;

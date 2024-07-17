@@ -1,7 +1,11 @@
-import { NavLink } from "react-router-dom";
+import React, { useContext } from 'react';
+import { NavLink } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 import { FaHome, FaDollyFlatbed , FaSignInAlt, FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
+    const { auth, user, logout } = useContext(AuthContext);
+
     return (
         <div className="bg-sombre mb-0 ">
             <nav className="navbar navbar-expand navbar-dark container ">
@@ -20,18 +24,32 @@ const Navbar = () => {
                             <FaDollyFlatbed  className="me-2" /> Articles
                         </NavLink>
                     </li>
-                    <li className="nav-item">
-                        <NavLink to="/login" className={({ isActive }) => {
-                            return isActive ? "nav-link active fs-2" : "nav-link fs-2";
-                        }}>
-                            <FaSignInAlt className="me-2" /> Se Connecter
+                    {auth ? (
+                        <>
+                        <li className="nav-item">
+                            <span className="nav-link fs-2">Bienvenue, {user ? user.prenom : 'Chargement...'}</span>
+                        </li>
+                        <li className="nav-item">
+                            <button className="btn btn-secondary fs-2" onClick={logout}>
+                            Se Déconnecter
+                            </button>
+                        </li>
+                        </>
+                    ) : (
+                        <li className="nav-item">
+                        <NavLink
+                            to="/login"
+                            className={({ isActive }) => (isActive ? 'nav-link active fs-2' : 'nav-link fs-2')}
+                        >
+                            Se Connecter
                         </NavLink>
-                    </li>
-                    <li className="nav-item">
+                        </li>
+                    )}
+                                        <li className="nav-item">
                         <NavLink to="/panier" className={({ isActive }) => {
                             return isActive ? "nav-link active fs-2" : "nav-link fs-2";
                         }}>
-                            <FaShoppingCart className="me-2" /> Panier
+                            <FaDollyFlatbed  className="me-2" /> Panier
                         </NavLink>
                     </li>
                 </ul>
