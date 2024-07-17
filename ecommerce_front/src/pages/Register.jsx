@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [nom, setNom] = useState('');
@@ -9,7 +9,8 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [adresse, setAdresse] = useState('');
   const [telephone, setTelephone] = useState('');
-  const [droit, setDroit] = useState(0); 
+  const [droit, setDroit] = useState(0);
+  const navigate = useNavigate(); // Utilisation de useNavigate pour la redirection
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +27,7 @@ const Register = () => {
 
       if (response.status === 201) {
         alert('Inscription réussie');
+        navigate('/login');
       } else {
         alert(response.data.message);
       }

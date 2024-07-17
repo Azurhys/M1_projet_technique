@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ProtectedRoute from './ProtectedRoute';
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
@@ -87,6 +88,7 @@ const ProductForm = () => {
   };
 
   return (
+    <ProtectedRoute requiredRole={1}>
     <div className="container my-5">
       <h2 className="mb-4">Gérer les Produits</h2>
       <form onSubmit={handleSubmit}>
@@ -197,6 +199,7 @@ const ProductForm = () => {
         </tbody>
       </table>
     </div>
+    </ProtectedRoute>
   );
 };
 

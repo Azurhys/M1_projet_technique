@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ProtectedRoute from './ProtectedRoute';
 
 const CategoryForm = () => {
   const [categories, setCategories] = useState([]);
@@ -142,6 +143,7 @@ const CategoryForm = () => {
   };
 
   return (
+    <ProtectedRoute requiredRole={1}>
     <div className="container my-5">
       <h2 className="mb-4">Gérer les Catégories</h2>
       <form onSubmit={handleSubmit}>
@@ -208,6 +210,7 @@ const CategoryForm = () => {
         </tbody>
       </table>
     </div>
+    </ProtectedRoute>  
   );
 };
 

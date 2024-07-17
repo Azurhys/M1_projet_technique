@@ -15,18 +15,8 @@ import Register from './pages/Register.jsx';
 import AdminDashboard from './pages/PanelAdmin.jsx';
 import CategoryForm from './components/CategoryForm.jsx';
 import ProductForm from './components/ProductForm.jsx';
-
-const PrivateRoute = ({ component: Component, ...rest }) => {
-  const { auth } = useContext(AuthContext);
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        auth ? <Component {...props} /> : <Redirect to="/login" />
-      }
-    />
-  );
-};
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Interdit from './pages/Interdit.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
@@ -38,10 +28,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="/login" element={<Login />} />
               <Route path='/register' element={<Register />} />
               <Route path="/details-article/:IDProduit" element={<DetailsArticles />} />
-              <Route path="/admin" element={<AdminDashboard /> } />
+              <Route path="/admin" element={<AdminDashboard />}  />
               <Route path="/admin/products" element={<ProductForm />} />
               <Route path="/admin/categories" element={<CategoryForm /> } />
               <Route path="/panier" element={<Panier />} />
+              <Route path='/forbidden' element={<Interdit />} />
             <Route path="/recap-panier" element={<RecapPanier />} />
           </Route>    
           </Routes>
