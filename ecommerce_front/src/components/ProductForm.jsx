@@ -87,10 +87,10 @@ const ProductForm = () => {
   };
 
   return (
-    <div>
-      <h2>Gérer les Produits</h2>
+    <div className="container my-5">
+      <h2 className="mb-4">Gérer les Produits</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className="form-group mb-3">
           <label>Nom</label>
           <input
             type="text"
@@ -101,7 +101,7 @@ const ProductForm = () => {
             required
           />
         </div>
-        <div className="form-group">
+        <div className="form-group mb-3">
           <label>Description</label>
           <input
             type="text"
@@ -112,7 +112,7 @@ const ProductForm = () => {
             required
           />
         </div>
-        <div className="form-group">
+        <div className="form-group mb-3">
           <label>Prix</label>
           <input
             type="number"
@@ -124,7 +124,7 @@ const ProductForm = () => {
             required
           />
         </div>
-        <div className="form-group">
+        <div className="form-group mb-3">
           <label>Stock</label>
           <input
             type="number"
@@ -135,7 +135,7 @@ const ProductForm = () => {
             required
           />
         </div>
-        <div className="form-group">
+        <div className="form-group mb-3">
           <label>Catégorie</label>
           {categories.length > 0 ? (
             <select
@@ -156,7 +156,7 @@ const ProductForm = () => {
             <p>Chargement des catégories...</p>
           )}
         </div>
-        <div className="form-group">
+        <div className="form-group mb-3">
           <label>Image URL</label>
           <input
             type="text"
@@ -170,16 +170,32 @@ const ProductForm = () => {
           {product.id_produit ? 'Modifier' : 'Ajouter'}
         </button>
       </form>
-      <h3>Liste des Produits</h3>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id_produit}>
-            {product.nom} - {product.description} - {product.prix} - {product.stock}
-            <button onClick={() => handleEdit(product)}>Modifier</button>
-            <button onClick={() => handleDelete(product.id_produit)}>Supprimer</button>
-          </li>
-        ))}
-      </ul>
+      <h3 className="mt-5">Liste des Produits</h3>
+      <table className="table table-striped mt-3">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Description</th>
+            <th>Prix</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((product) => (
+            <tr key={product.id_produit}>
+              <td>{product.nom}</td>
+              <td>{product.description}</td>
+              <td>{product.prix}</td>
+              <td>{product.stock}</td>
+              <td className="d-flex align-items-center">
+                <button className="btn btn-warning  me-2 my-3" onClick={() => handleEdit(product)}>Modifier</button>
+                <button className="btn btn-danger " onClick={() => handleDelete(product.id_produit)}>Supprimer</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

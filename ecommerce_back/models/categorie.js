@@ -1,10 +1,8 @@
 class Category {
-    constructor(id_categorie, nom, id_categorie_parent) {
-      this.id_categorie = id_categorie;
-      this.nom = nom;
-      this.id_categorie_parent = id_categorie_parent;
-    }
+  constructor(id_categorie, nom) {
+    this.id_categorie = id_categorie;
+    this.nom = nom;
   }
-  
-  module.exports = Category;
-  
+}
+
+module.exports = Category;
