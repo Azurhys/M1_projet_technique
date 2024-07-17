@@ -16,6 +16,60 @@ const RecapPanier = () => {
         return cartItems.reduce((acc, product) => acc + calculateProductTotal(product), 0);
     };
 
+    const handlePasserCommande = async () => {
+        try {
+            const total = calculateCartTotal();
+            const newCart = {
+                id_utilisateur: 1, // Vous pouvez remplacer par l'ID utilisateur actuel
+                date_creation: new Date().toISOString(),
+                statut: 'En cours',
+                total
+            };
+
+            // Ajouter le panier
+            const responsePanier = await fetch('http://localhost:3000/paniers/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newCart),
+            });
+
+            if (responsePanier.ok) {
+                const panier = await responsePanier.json();
+                const panierId = panier.id_panier;
+
+                // Ajouter les produits dans Panier_Produit
+                for (const item of cartItems) {
+                    const newCartProduct = {
+                        id_panier: panierId,
+                        id_produit: item.id,
+                        quantite: item.quantity
+                    };
+
+                    const responsePanierProduit = await fetch('http://localhost:3000/panierProduits/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(newCartProduct),
+                    });
+
+                    if (!responsePanierProduit.ok) {
+                        throw new Error('Erreur lors de l\'ajout d\'un produit au panier');
+                    }
+                }
+
+                alert('Commande réussie!');
+            } else {
+                alert('Erreur lors de la création du panier');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la commande');
+        }
+    };
+
     return (
         <div className="container my-5">
             <h2 className="text-center mb-4">Récapitulatif du Panier</h2>
@@ -41,7 +95,7 @@ const RecapPanier = () => {
             </ul>
             <div className='d-flex justify-content-between mt-5'>
                 <p>Total Panier : <b>{calculateCartTotal().toFixed(2)}€</b></p>
-                <button className="btn btn-primary">Passer à la commande</button>
+                <button className="btn btn-primary" onClick={handlePasserCommande}>Passer à la commande</button>
             </div>
         </div>
     );
