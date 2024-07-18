@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const [nom, setNom] = useState('');
@@ -26,13 +27,13 @@ const Register = () => {
       });
 
       if (response.status === 201) {
-        alert('Inscription réussie');
+        toast.success('Inscription réussie');
         navigate('/login');
       } else {
-        alert(response.data.message);
+        toast.error(response.data.message);
       }
     } catch (error) {
-      alert(error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
 
