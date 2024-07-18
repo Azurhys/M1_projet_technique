@@ -5,6 +5,8 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 SET NAMES utf8mb4;
 
+USE ecommerce;
+
 DROP TABLE IF EXISTS `categorie`;
 CREATE TABLE `categorie` (
   `id_categorie` int(11) NOT NULL AUTO_INCREMENT,
