@@ -1,8 +1,8 @@
 const request = require('supertest');
-const app = require('../app');
-const db = require('../config/db');
 const chai = require('chai');
 const expect = chai.expect;
+const app = require('../app');
+const db = require('../config/db');
 
 describe('Commande API', () => {
   let token;
@@ -22,6 +22,7 @@ describe('Commande API', () => {
       if (!token) {
         throw new Error('Échec de la connexion: token JWT non reçu');
       }
+
     } catch (err) {
       console.error('Erreur lors de l\'authentification:', err.message);
       throw err;
@@ -37,10 +38,13 @@ describe('Commande API', () => {
           id_utilisateur: 1,
           id_panier: 1,
           date_commande: '2024-07-01',
-          total: 100.0,
+          nom: 'Nom Test',
+          prenom: 'Prénom Test',
           adresse_livraison: '123 Rue de Test',
           adresse_facturation: '123 Rue de Facturation',
-          mode_paiement: 'Carte de crédit',
+          numero_carte: '1111222233334444',
+          date_expir: '2024-12',
+          cryptogramme: '123',
           statut_commande: 'En attente'
         });
 
@@ -84,20 +88,22 @@ describe('Commande API', () => {
 
   describe('PUT /commandes/:id_commande', () => {
     it('devrait mettre à jour une commande existante', async () => {
-      const updatedData = {
-        date_commande: '2024-07-01',
-        adresse_livraison: '456 Rue de Test Modifié',
-        adresse_facturation: '456 Rue de Facturation Modifiée',
-        statut_commande: 'Expédiée'
-      };
-
       const res = await request(app)
         .put(`/commandes/${newOrderId}`)
         .set('Authorization', `Bearer ${token}`)
-        .send(updatedData);
+        .send({
+          date_commande: '2024-07-02',
+          adresse_livraison: '456 Rue de Test Modifié',
+          adresse_facturation: '456 Rue de Facturation Modifiée',
+          statut_commande: 'Expédiée'
+        });
 
       expect(res.status).to.equal(200);
-      expect(res.body).to.include(updatedData);
+      expect(res.body).to.have.property('id_commande', newOrderId);
+      expect(res.body).to.have.property('date_commande', '2024-07-02');
+      expect(res.body).to.have.property('adresse_livraison', '456 Rue de Test Modifié');
+      expect(res.body).to.have.property('adresse_facturation', '456 Rue de Facturation Modifiée');
+      expect(res.body).to.have.property('statut_commande', 'Expédiée');
     });
   });
 
