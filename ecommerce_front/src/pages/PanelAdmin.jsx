@@ -26,6 +26,15 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
+          <div className="col-md-6 mb-3">
+            <div className="card">
+              <div className="card-body text-center">
+                <h5 className="card-title">Gérer les Commandes</h5>
+                <p className="card-text">Ajouter, modifier ou supprimer des commandes.</p>
+                <NavLink to="/admin/commandes" className="btn btn-primary">Accéder</NavLink>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </ProtectedRoute>

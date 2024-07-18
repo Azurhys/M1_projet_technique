@@ -19,6 +19,7 @@ import CategoryForm from './components/CategoryForm.jsx';
 import ProductForm from './components/ProductForm.jsx';
 import Interdit from './pages/Interdit.jsx';
 import Profile from './pages/Profil.jsx';
+import AdminOrders from './components/CommandesForm.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
@@ -39,6 +40,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="/commande" element={<Commande />} />
               <Route path="/confirmation-commande" element={<ConfirmationCommande />} />
               <Route path='/forbidden' element={<Interdit />} />
+              <Route path="/admin/commandes" element={<AdminOrders />} />
           </Route>    
           </Routes>
     </BrowserRouter>

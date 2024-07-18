@@ -52,17 +52,21 @@ router.post('/', async (req, res, next) => {
 });
 
 //GET ALL
-router.get('/', async (req, res, next) => {
+router.get('/all', authMiddleware, checkRole([1]), async (req, res, next) => {
   try {
     const [rows] = await db.query('SELECT * FROM Commande');
-    res.status(200).json(rows);
+    const commandesWithCart = await Promise.all(rows.map(async (commande) => {
+      const [panierProduits] = await db.query('SELECT pp.*, p.nom, p.prix FROM Panier_Produit pp JOIN Produit p ON pp.id_produit = p.id_produit WHERE pp.id_panier = ?', [commande.id_panier]);
+      return { ...commande, panierProduits };
+    }));
+    res.status(200).json(commandesWithCart);
   } catch (err) {
     next(err);
   }
 });
 
 //GET ONE
-router.get('/:id_commande', async (req, res, next) => {
+router.get('/:id_commande', authMiddleware, checkRole([1]),  async (req, res, next) => {
   const { id_commande } = req.params;
   try {
     const [rows] = await db.query('SELECT * FROM Commande WHERE id_commande = ?', [id_commande]);
@@ -77,7 +81,7 @@ router.get('/:id_commande', async (req, res, next) => {
 });
 
 //PUT
-router.put('/:id_commande', async (req, res, next) => {
+router.put('/:id_commande', authMiddleware, checkRole([1]),  async (req, res, next) => {
   const { id_commande } = req.params;
   const {date_commande, adresse_livraison, adresse_facturation, statut_commande } = req.body;
   try {
@@ -91,8 +95,20 @@ router.put('/:id_commande', async (req, res, next) => {
   }
 });
 
+// PATCH update commande status (Admin access)
+router.patch('/:id_commande', authMiddleware, checkRole([1]), async (req, res, next) => {
+  const { id_commande } = req.params;
+  const { statut_commande } = req.body;
+  try {
+    await db.query('UPDATE Commande SET statut_commande = ? WHERE id_commande = ?', [statut_commande, id_commande]);
+    res.status(200).json({ id_commande, statut_commande });
+  } catch (err) {
+    next(err);
+  }
+});
+
 //DELETE
-router.delete('/:id_commande', async (req, res, next) => {
+router.delete('/:id_commande', authMiddleware, checkRole([1]),  async (req, res, next) => {
   const { id_commande } = req.params;
   try {
     await db.query('DELETE FROM Commande WHERE id_commande = ?', [id_commande]);
