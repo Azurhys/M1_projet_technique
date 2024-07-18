@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha --timeout 10000 --file ./test/global-teardown.js"
+    "test": "mocha --timeout 10000 --exit"
   },
   "dependencies": {
     "archiver": "^7.0.1",
