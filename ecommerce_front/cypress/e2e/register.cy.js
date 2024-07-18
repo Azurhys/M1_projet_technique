@@ -32,7 +32,7 @@ describe('Register Page', () => {
       cy.get('input[type="email"]').type('newuser@example.com');
       cy.get('input[type="password"]').type('password123');
       cy.get('button[type="submit"]').click();
-  
+      cy.wait(5000)
       cy.url().should('eq', 'http://localhost:5173/');
     });
 
