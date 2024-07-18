@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    environment: ACTIONS
     services:
       mysql:
         image: mysql:5.7
