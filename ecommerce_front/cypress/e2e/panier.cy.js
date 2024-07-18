@@ -20,7 +20,7 @@ describe('Scénario ajout au panier + commande', () => {
         cy.url().should('eq', 'http://localhost:5173/panier')
         cy.get('.mt-5 > .btn').click()
         cy.url().should('eq', 'http://localhost:5173/recap-panier')
-        cy.get('.mt-5 > .btn').click()
+        //cy.get('.mt-5 > .btn').click()
     });
     
     

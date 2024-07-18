@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ACTIONS
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ecommerce
+        ports:
+          - 3306:3306
+        options: > 
+          --health-cmd="mysqladmin ping --silent" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: |
+        cd ecommerce_back
+        npm install
+
+    - name: Wait for MySQL to be ready
+      run: |
+        while ! mysqladmin ping -h"127.0.0.1" --silent; do
+          echo 'waiting for mysql to be ready...'
+          sleep 5
+        done
+
+    - name: Verify environment variables
+      env:
+        DB_HOST: 127.0.0.1
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_NAME: ecommerce
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: |
+        echo "DB_HOST: $DB_HOST"
+        echo "DB_USER: $DB_USER"
+        echo "DB_PASSWORD: $DB_PASSWORD"
+        echo "DB_NAME: $DB_NAME"
+        echo "JWT_SECRET: $JWT_SECRET"
+
+    - name: Set up database
+      env:
+        DB_HOST: 127.0.0.1
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_NAME: ecommerce
+      run: |
+        echo "Setting up database..."
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SOURCE ./ecommerce_back/schema.sql" || (echo "Failed to set up database" && exit 1)
+
+    - name: Check database state
+      env:
+        DB_HOST: 127.0.0.1
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_NAME: ecommerce
+      run: |
+        echo "Checking database state..."
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SHOW TABLES;" "$DB_NAME"
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SELECT * FROM Panier;" "$DB_NAME"
+        mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SELECT * FROM Produit;" "$DB_NAME"
+
+    - name: Run backend tests
+      env:
+        DB_HOST: 127.0.0.1
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_NAME: ecommerce
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: |
+        cd ecommerce_back
+        npm start
+
+    - name: Start Vite server
+      run: |
+        cd ecommerce_front
+        npm install
+        npm run dev &
+        sleep 10
+
+    - name: Run Cypress tests
+      env:
+        CYPRESS_DB_HOST: 127.0.0.1
+        CYPRESS_DB_USER: root
+        CYPRESS_DB_PASSWORD: root
+        CYPRESS_DB_NAME: ecommerce
+        CYPRESS_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: |
+        cd ecommerce_front
+        npx cypress run
