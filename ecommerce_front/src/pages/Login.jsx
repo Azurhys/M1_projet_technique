@@ -1,31 +1,37 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 const Login = () => {
-  const { login, setUserID } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Utilisation de useNavigate pour la redirection
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', {
-        email: email,
-        mot_de_passe: password,
+      const response = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          mot_de_passe: password,
+        }),
       });
 
+      const data = await response.json();
       if (response.status === 200) {
-        login(response.data.token);
+        login(data.token);
         navigate('/'); 
       } else {
-        toast.success(response.data.message);
+        alert(data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.error('Erreur lors de la connexion:', error);
+      alert('Erreur lors de la connexion');
     }
   };
 
@@ -34,7 +40,7 @@ const Login = () => {
       <h2 className="my-4">Connexion</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Email:</label>
+          <label>Email :</label>
           <input
             type="email"
             className="form-control"
@@ -44,7 +50,7 @@ const Login = () => {
           />
         </div>
         <div className="form-group my-3">
-          <label>Mot de passe:</label>
+          <label>Mot de passe :</label>
           <input
             type="password"
             className="form-control"
@@ -53,9 +59,9 @@ const Login = () => {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary mb-3">Login</button>
+        <button type="submit" className="btn btn-primary mb-3">Connexion</button>
         <p className="mt-3">
-          Pas de compte ? <NavLink to="/register">Inscrivez-vous !</NavLink>
+            Pas de compte ? <NavLink to="/register">Inscrivez-vous !</NavLink>
         </p>
       </form>
     </div>

@@ -68,6 +68,41 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
+router.get('/profile', authMiddleware, async (req, res, next) => {
+  try {
+    const { id_utilisateur } = req.user;
+    const [rows] = await db.query('SELECT * FROM Utilisateur WHERE id_utilisateur = ?', [id_utilisateur]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+    res.status(200).json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/profile', authMiddleware, async (req, res, next) => {
+  const { id_utilisateur } = req.user;
+  const { nom, prenom, email, adresse, telephone } = req.body;
+
+  try {
+    const [result] = await db.query(
+      'UPDATE Utilisateur SET nom = ?, prenom = ?, email = ?, adresse = ?, telephone = ? WHERE id_utilisateur = ?',
+      [nom, prenom, email, adresse, telephone, id_utilisateur]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    res.status(200).json({ message: 'Informations mises à jour avec succès' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+module.exports = router;
+
 // ROUTE POUR RÉCUPÉRER LES INFORMATIONS DE L'UTILISATEUR CONNECTÉ
 router.get('/me', authMiddleware, (req, res) => {
   res.json(req.user);
