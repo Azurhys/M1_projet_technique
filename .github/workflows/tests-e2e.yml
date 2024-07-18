@@ -74,8 +74,10 @@ jobs:
       run: |
         cd ecommerce_front
         npm install
-        npm run dev &
-        sleep 10
+        npm run dev > vite.log 2>&1 &
+        
+    - name: Wait for servers to be ready
+      run: sleep 30
 
     - name: Run Cypress tests
       env:
