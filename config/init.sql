@@ -5,8 +5,6 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 SET NAMES utf8mb4;
 
-USE ecommerce;
-
 DROP TABLE IF EXISTS `categorie`;
 CREATE TABLE `categorie` (
   `id_categorie` int(11) NOT NULL AUTO_INCREMENT,
@@ -148,5 +146,21 @@ CREATE TABLE `utilisateur` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
--- 2024-07-18 14:08:56
+INSERT INTO `utilisateur` (`id_utilisateur`, `nom`, `prenom`, `email`, `mot_de_passe`, `adresse`, `telephone`, `droit`) VALUES
+(1,	'Admin',	'User',	'admin@example.com',	'password123',	'123 Admin St, Paris, France',	'1234567890',	1),
+(2,	'John',	'Doe',	'amerpillat@gmail.com',	'password123',	'456 User Ave, Paris, France',	'0987654321',	0),
+(3,	'Jane',	'Doe',	'jane.doe@example.com',	'password123',	'789 User Blvd, Paris, France',	'1122334455',	0),
+(4,	'Alice',	'Smith',	'alice.smith@example.com',	'password123',	'321 User Ln, Paris, France',	'6677889900',	0),
+(5,	'Bob',	'Brown',	'bob.brown@example.com',	'password123',	'654 User Rd, Paris, France',	'4455667788',	0),
+(6,	'Charlie',	'Johnson',	'charlie.johnson@example.com',	'password123',	'987 User St, Paris, France',	'2233445566',	0),
+(7,	'Eve',	'Davis',	'eve.davis@example.com',	'password123',	'159 User Pl, Paris, France',	'7788990011',	0),
+(8,	'Mallory',	'Evans',	'mallory.evans@example.com',	'password123',	'753 User Dr, Paris, France',	'3344556677',	0),
+(9,	'Trent',	'Miller',	'trent.miller@example.com',	'password123',	'951 User Ct, Paris, France',	'5566778899',	0),
+(10,	'Peggy',	'Taylor',	'peggy.taylor@example.com',	'password123',	'147 User Pkwy, Paris, France',	'9988776655',	0),
+(11,	'Pereira',	'Hugo',	'hugo.b_pereira@outlook.com',	'$2a$10$tEtR/eHo.g/VG94DYdL3WuTSM3IIvlcNnuNS/zM/nD2RCLFn8PjzW',	'1 impasse victorine',	'0782353410',	0),
+(12,	'Pereira',	'Hugo',	'hugo@hugo',	'$2a$10$.7hgbGuZ1.ahCWDBwoqpsuvqkQrYB6zw4JOsMKjLGcxh/CiRBnocO',	'1 impasse victorine',	'0782353410',	0),
+(13,	'test',	'test',	'test@test',	'$2a$10$qirQS.xBewMXxtTYDKlwI..xcqMJEcOWesybdmM7aVeCwjEWLDl9a',	'test',	'12345',	0),
+(14,	'test',	'test',	'test1@test',	'$2a$10$JfAtJzKStQ5ugiAPITsuq.zY91AF2gFHCKbTK0ZWKaaAb3uzYr3/2',	'test',	'123',	0),
+(15,'Admin', 'Istrateur', 'admin@example.com', '$2a$10$jCQeBxDzuaTVoS.2dyA3rO3./vuq2eDykwlt8X9nFaGDCa63S4uYG', '123 Admin St', '1234567890', 1),
+(16,'Jean', 'Dupont', 'jean.dupont@example.com', '$2a$10$jCQeBxDzuaTVoS.2dyA3rO3./vuq2eDykwlt8X9nFaGDCa63S4uYG', '456 Rue de Paris', '0987654321', 0)
+ON DUPLICATE KEY UPDATE `id_utilisateur` = VALUES(`id_utilisateur`), `nom` = VALUES(`nom`), `prenom` = VALUES(`prenom`), `email` = VALUES(`email`), `mot_de_passe` = VALUES(`mot_de_passe`), `adresse` = VALUES(`adresse`), `telephone` = VALUES(`telephone`), `droit` = VALUES(`droit`);
