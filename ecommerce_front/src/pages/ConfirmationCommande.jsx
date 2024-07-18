@@ -62,11 +62,14 @@ const ConfirmationCommande = () => {
             date_commande,
             adresse_livraison,
             adresse_facturation,
+            id_panier
         } = commande;
 
         try {
-            const response = await fetch(`http://localhost:3000/commandes/${id_commande}`, requestOptions, {
+            // Mise à jour du statut de la commande
+            const responseCommande = await fetch(`http://localhost:3000/commandes/${id_commande}`, {
                 method: 'PUT',
+                headers: requestOptions.headers,
                 body: JSON.stringify({
                     date_commande,
                     adresse_livraison,
@@ -75,15 +78,26 @@ const ConfirmationCommande = () => {
                 }),
             });
 
-            if (response.ok) {
-                toast.success("Commande payée avec succès");
-                setCommande({ ...commande, statut_commande: 'payé' });
+            if (responseCommande.ok) {
+                // Mise à jour du statut du panier
+                const responsePanier = await fetch(`http://localhost:3000/paniers/${id_panier}`, {
+                    method: 'PUT',
+                    headers: requestOptions.headers,
+                    body: JSON.stringify({ statut: 'fini' }),
+                });
+
+                if (responsePanier.ok) {
+                    toast.success("Commande payée avec succès");
+                    setCommande({ ...commande, statut_commande: 'payé' });
+                } else {
+                    toast.error("Erreur lors de la mise à jour du statut du panier");
+                }
             } else {
                 toast.error("Erreur lors de la mise à jour du statut de la commande");
             }
         } catch (error) {
             console.error('Erreur:', error);
-            toast.error("Erreur lors de la mise à jour du statut de la commande");
+            toast.error("Erreur lors de la mise à jour du statut de la commande et du panier");
         }
     };
 
@@ -97,7 +111,7 @@ const ConfirmationCommande = () => {
 
     const { adresse_livraison, numero_carte } = commande;
 
-    // Fonction pour masquer tous les chiffres sauf les 4 premiers et ajouter des étoiles
+    // Fonction pour masquer tous les chiffres sauf les 4 derniers et ajouter des étoiles
     const maskCardNumber = (cardNumber) => {
         const visibleDigits = 4;
         const maskedSection = cardNumber.slice(0, -visibleDigits).replace(/\d/g, '*');
