@@ -45,6 +45,8 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
     }
 
+    const IdUser = user[0].id_utilisateur;
+
     const tokenPayload = {
         id_utilisateur: user[0].id_utilisateur,
         nom: user[0].nom,

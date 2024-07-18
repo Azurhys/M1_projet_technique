@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { login } = useContext(AuthContext);
+  const { login, setUserID } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate(); // Utilisation de useNavigate pour la redirection
@@ -21,10 +22,10 @@ const Login = () => {
         login(response.data.token);
         navigate('/'); // Redirection vers la page d'accueil après une connexion réussie
       } else {
-        alert(response.data.message);
+        toast.success(response.data.message);
       }
     } catch (error) {
-      alert(error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
 
