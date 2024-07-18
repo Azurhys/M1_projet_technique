@@ -44,7 +44,7 @@ const Navbar = () => {
                         </li>
                         {auth ? (
                             <>
-                                <li className="nav-item d-flex align-items-center">
+                                <li className="nav-item d-flex align-items-center ms-3">
                                     <span className="nav-link fs-4 d-flex align-items-center">
                                         <FaUserCircle className="me-2" /> Bienvenue, {user ? user.prenom : 'Chargement...'}
                                     </span>
@@ -54,7 +54,7 @@ const Navbar = () => {
                                 </li>
                             </>
                         ) : (
-                            <li className="nav-item">
+                            <li className="nav-item ms-3">
                                 <NavLink to="/login" className={({ isActive }) => (isActive ? 'nav-link active fs-4' : 'nav-link fs-4')}>
                                     <button className="btn btn-outline-light btn-sm ms-3 fs-5">
                                         Se Connecter
