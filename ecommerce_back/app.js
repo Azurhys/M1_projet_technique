@@ -40,9 +40,9 @@ app.use('/produits', produitsRouter);
 app.use('/image', imageRouter);
 app.use('/download', authMiddleware, downloadRouter);
 app.use('/categories', categoriesRouter);
-app.use('/commandes',authMiddleware, commandesRouter)
-app.use('/paniers', paniersRouter)
-app.use('/panierProduits', panierProduitsRouter)
+app.use('/commandes',authMiddleware, commandesRouter);
+app.use('/paniers', authMiddleware, paniersRouter);
+app.use('/panierProduits', authMiddleware, panierProduitsRouter);
 app.use('/auth', authRouter);
 app.use('/souscategories', sousCategorieRouter);
 

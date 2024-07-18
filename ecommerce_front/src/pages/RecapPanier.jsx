@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const RecapPanier = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -30,19 +31,17 @@ const RecapPanier = () => {
                 const paniers = await responseGetPanier.json();
                 const existingPanier = paniers.find(panier => panier.id_utilisateur === userId);
 
-                if (existingPanier) {
-                    // L'utilisateur a déjà un panier
+                if (existingPanier) 
+                    {
                     panierId = existingPanier.id_panier;
 
-                    // Récupérer les produits actuels du panier depuis la base de données
                     const responseGetPanierProduits = await fetch(`http://localhost:3000/panierProduits/${panierId}`);
                     if (responseGetPanierProduits.ok) {
                         const panierProduits = await responseGetPanierProduits.json();
 
                         if (Array.isArray(panierProduits)) {
-                            // Mettre à jour ou ajouter les produits existants dans le panier
                             for (const item of cartItems) {
-                                const panierProduit = panierProduits.find(p => p.id_produit === item.id);
+                                const panierProduit = panierProduits.find(p => p.id_produit == item.id);
                                 if (panierProduit) {
                                     const responsePanierProduit = await fetch(`http://localhost:3000/panierProduits/put/${panierId}/${item.id}`, {
                                         method: 'PUT',
@@ -72,9 +71,6 @@ const RecapPanier = () => {
                             // Supprimer les produits absents dans le panier local
                             for (const panierProduit of panierProduits) {
                                 const foundInCart = savedCart.find(item => item.id == panierProduit.id_produit);
-                                console.log(panierProduit);
-                                console.log(cartItems);
-                                console.log(foundInCart);
                                 if (!foundInCart) {
                                     console.log(`Suppression du produit ${panierProduit.id_produit} du panier ${panierId}`);
                                     await fetch(`http://localhost:3000/panierProduits/delete/${panierId}/${panierProduit.id_produit}`, {
@@ -83,11 +79,11 @@ const RecapPanier = () => {
                                 }
                             }
                         } else {
-                            alert('La réponse des produits du panier n\'est pas valide');
+                            toast.error("La réponse des produits du panier n\'est pas valide");
                             return;
                         }
                     } else {
-                        alert('Erreur lors de la récupération des produits du panier');
+                        toast.error("Erreur lors de la récupération des produits du panier");
                         return;
                     }
                 } else {
@@ -126,16 +122,16 @@ const RecapPanier = () => {
                             });
                         }
                     } else {
-                        alert('Erreur lors de la création du panier');
+                        toast.error("Erreur lors de la création du panier");
                         return;
                     }
                 }
             } else {
-                alert('Erreur lors de la vérification des paniers');
+                toast.error("Erreur lors de la vérification des paniers");
                 return;
             }
 
-            alert('Commande réussie!');
+            toast.success("Panier validé");
             navigate('/commande');
         } catch (error) {
             console.error('Erreur:', error);

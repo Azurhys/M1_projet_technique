@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const DetailsArticles = () => {
     const { IDProduit } = useParams();
@@ -53,7 +54,8 @@ const DetailsArticles = () => {
         }, 0);
 
         if (selectedQuantity + totalInCart > product.stock) {
-            alert(`Il n'y a plus de stock disponible.`);
+            
+            toast.error("Il n'y a plus de stock disponible.");
             return;
         }
         const existingProductIndex = cart.findIndex(item => item.id === IDProduit);
@@ -65,7 +67,7 @@ const DetailsArticles = () => {
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
-        alert('Produit ajouté au panier');
+        toast.success("Produit ajouté au panier");
     };
 
     const handleQuantityChange = (event) => {
