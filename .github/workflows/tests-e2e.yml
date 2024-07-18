@@ -71,7 +71,7 @@ jobs:
         npm start > backend.log 2>&1 &
 
     - name: Start Vite server
-        run: |
+      run: |
           cd ecommerce_front
           npm install
           npm run dev &
