@@ -50,7 +50,7 @@ jobs:
         DB_PASSWORD: ${{ secrets.ACTIONS_DB_PASSWORD }}
         DB_NAME: ${{ secrets.ACTIONS_DB_NAME }}
       run: |
-        mysql -h 127.0.0.1 -u$DB_USER -p$DB_PASSWORD -e "SOURCE ./config/init.sql"
+        mysql -h 127.0.0.1 -u "$DB_USER" -p "$DB_PASSWORD" -e "SOURCE ./config/init.sql"
 
     - name: Run tests
       env:
