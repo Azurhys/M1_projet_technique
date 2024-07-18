@@ -56,7 +56,9 @@ const Navbar = () => {
                         ) : (
                             <li className="nav-item">
                                 <NavLink to="/login" className={({ isActive }) => (isActive ? 'nav-link active fs-4' : 'nav-link fs-4')}>
-                                    Se Connecter
+                                    <button className="btn btn-outline-light btn-sm ms-3 fs-5">
+                                        Se Connecter
+                                    </button>
                                 </NavLink>
                             </li>
                         )}
