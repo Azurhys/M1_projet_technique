@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const SousCategory = require('../models/souscategorie');
+const authMiddleware = require('../middleware/auth');
+const checkRole = require('../middleware/roles');
 
 // ADD a subcategory
-router.post('/', async (req, res, next) => {
+router.post('/', authMiddleware, checkRole([1]),async (req, res, next) => {
   const { nom, id_categorie } = req.body;
   try {
     const [result] = await db.query('INSERT INTO SousCategories (nom, id_categorie) VALUES (?, ?)', [nom, id_categorie]);
@@ -16,7 +18,7 @@ router.post('/', async (req, res, next) => {
 });
 
 // UPDATE a subcategory
-router.put('/:id_souscategorie', async (req, res, next) => {
+router.put('/:id_souscategorie', authMiddleware, checkRole([1]),async (req, res, next) => {
   const { id_souscategorie } = req.params;
   const { nom, id_categorie } = req.body;
   try {
@@ -28,7 +30,7 @@ router.put('/:id_souscategorie', async (req, res, next) => {
 });
 
 // DELETE a subcategory
-router.delete('/:id_souscategorie', async (req, res, next) => {
+router.delete('/:id_souscategorie',authMiddleware, checkRole([1]), async (req, res, next) => {
   const { id_souscategorie } = req.params;
   try {
     await db.query('DELETE FROM SousCategories WHERE id_souscategorie = ?', [id_souscategorie]);

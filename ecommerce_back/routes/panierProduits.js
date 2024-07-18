@@ -7,13 +7,29 @@ const CartProduct = require('../models/panierProduit');
 router.post('/', async (req, res, next) => {
   const { id_panier, id_produit, quantite } = req.body;
   try {
-    await db.query(
-      'INSERT INTO Panier_Produit (id_panier, id_produit, quantite) VALUES (?, ?, ?)',
-      [id_panier, id_produit, quantite]
+    console.log('Requête reçue pour ajouter un produit au panier:', req.body);
+
+    const [existingEntries] = await db.query(
+      'SELECT * FROM Panier_Produit WHERE id_panier = ? AND id_produit = ?',
+      [id_panier, id_produit]
     );
-    const newCartProduct = new CartProduct(id_panier, id_produit, quantite);
-    res.status(201).json(newCartProduct);
+
+    if (existingEntries.length > 0) {
+      // Si l'entrée existe déjà, renvoyez un message d'erreur
+      res.status(409).json({ error: 'Le produit existe déjà dans le panier' });
+    } else {
+      // Sinon, insérez la nouvelle entrée
+      const [result] = await db.query(
+        'INSERT INTO Panier_Produit (id_panier, id_produit, quantite) VALUES (?, ?, ?)',
+        [id_panier, id_produit, quantite]
+      );
+
+      const newCartProduct = new CartProduct(id_panier, id_produit, quantite);
+      res.status(201).json(newCartProduct);
+    }
   } catch (err) {
+    console.error('Erreur lors de l\'ajout du produit au panier:', err);
+    res.status(500).json({ error: 'Erreur interne du serveur', details: err.message });
     next(err);
   }
 });
