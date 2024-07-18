@@ -55,7 +55,6 @@ jobs:
     - name: Run tests
       env:
         DB_HOST: 127.0.0.1
-        DB_HOST: ${{ secrets.ACTIONS_DB_HOST }}
         DB_USER: ${{ secrets.ACTIONS_DB_USER }}
         DB_PASSWORD: ${{ secrets.ACTIONS_DB_PASSWORD }}
         DB_NAME: ${{ secrets.ACTIONS_DB_NAME }}
