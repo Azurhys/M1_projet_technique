@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ConfirmationCommande = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [commande, setCommande] = useState(null);
     const [panierProduits, setPanierProduits] = useState([]);
     const { token } = useContext(AuthContext);
@@ -89,6 +90,8 @@ const ConfirmationCommande = () => {
                 if (responsePanier.ok) {
                     toast.success("Commande payée avec succès");
                     setCommande({ ...commande, statut_commande: 'payé' });
+                    localStorage.removeItem('cart');
+                    navigate('/profil');
                 } else {
                     toast.error("Erreur lors de la mise à jour du statut du panier");
                 }
@@ -111,7 +114,6 @@ const ConfirmationCommande = () => {
 
     const { adresse_livraison, numero_carte } = commande;
 
-    // Fonction pour masquer tous les chiffres sauf les 4 derniers et ajouter des étoiles
     const maskCardNumber = (cardNumber) => {
         const visibleDigits = 4;
         const maskedSection = cardNumber.slice(0, -visibleDigits).replace(/\d/g, '*');

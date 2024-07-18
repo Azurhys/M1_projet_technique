@@ -66,7 +66,7 @@ router.get('/all', authMiddleware, checkRole([1]), async (req, res, next) => {
 });
 
 //GET ONE
-router.get('/:id_commande', authMiddleware, checkRole([1]),  async (req, res, next) => {
+router.get('/:id_commande', authMiddleware, checkRole([0]),  async (req, res, next) => {
   const { id_commande } = req.params;
   try {
     const [rows] = await db.query('SELECT * FROM Commande WHERE id_commande = ?', [id_commande]);
@@ -81,7 +81,7 @@ router.get('/:id_commande', authMiddleware, checkRole([1]),  async (req, res, ne
 });
 
 //PUT
-router.put('/:id_commande', authMiddleware, checkRole([1]),  async (req, res, next) => {
+router.put('/:id_commande', authMiddleware, checkRole([0]),  async (req, res, next) => {
   const { id_commande } = req.params;
   const {date_commande, adresse_livraison, adresse_facturation, statut_commande } = req.body;
   try {
@@ -122,7 +122,7 @@ router.delete('/:id_commande', authMiddleware, checkRole([1]),  async (req, res,
 router.get('/user/:id_utilisateur', authMiddleware, async (req, res, next) => {
   const { id_utilisateur } = req.params;
   try {
-    const [commandes] = await db.query('SELECT * FROM Commande WHERE id_utilisateur = ?', [id_utilisateur]);
+    const [commandes] = await db.query('SELECT * FROM Commande WHERE statut_commande != "En attente" AND id_utilisateur = ?', [id_utilisateur]);
 
     const commandesWithCart = await Promise.all(commandes.map(async (commande) => {
       const [panierProduits] = await db.query('SELECT pp.*, p.nom, p.prix FROM Panier_Produit pp JOIN Produit p ON pp.id_produit = p.id_produit WHERE pp.id_panier = ?', [commande.id_panier]);
