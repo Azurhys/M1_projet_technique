@@ -4,7 +4,7 @@ const db = require('../config/db');
 const User = require('../models/user');
 
 //ADD
-router.post('/add', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   const { nom, prenom, email, mot_de_passe, adresse, telephone, droit } = req.body;
   try {
     const [result] = await db.query(
@@ -44,7 +44,7 @@ router.get('/:id_utilisateur', async (req, res, next) => {
 });
 
 //PUT
-router.put('/put/:id_utilisateur', async (req, res, next) => {
+router.put('/:id_utilisateur', async (req, res, next) => {
   const { id_utilisateur } = req.params;
   const { nom, prenom, email, mot_de_passe, adresse, telephone, droit } = req.body;
   try {
@@ -59,7 +59,7 @@ router.put('/put/:id_utilisateur', async (req, res, next) => {
 });
 
 //DELETE
-router.delete('/delete/:id_utilisateur', async (req, res, next) => {
+router.delete('/:id_utilisateur', async (req, res, next) => {
   const { id_utilisateur } = req.params;
   try {
     await db.query('DELETE FROM Utilisateur WHERE id_utilisateur = ?', [id_utilisateur]);

@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Utilisation de useNavigate pour la redirection
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +19,7 @@ const Login = () => {
 
       if (response.status === 200) {
         login(response.data.token);
+        navigate('/'); // Redirection vers la page d'accueil après une connexion réussie
       } else {
         alert(response.data.message);
       }
@@ -41,7 +43,7 @@ const Login = () => {
           />
         </div>
         <div className="form-group my-3">
-          <label>Password:</label>
+          <label>Mot de passe:</label>
           <input
             type="password"
             className="form-control"
@@ -52,7 +54,7 @@ const Login = () => {
         </div>
         <button type="submit" className="btn btn-primary mb-3">Login</button>
         <p className="mt-3">
-            Pas de compte ? <NavLink to="/register">Inscrivez-vous !</NavLink>
+          Pas de compte ? <NavLink to="/register">Inscrivez-vous !</NavLink>
         </p>
       </form>
     </div>
