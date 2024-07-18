@@ -44,17 +44,23 @@ jobs:
         done
 
     - name: Set up database
+      env : 
+        DB_HOST: ${{ secrets.ACTIONS_DB_HOST }}
+        DB_USER: ${{ secrets.ACTIONS_DB_USER }}
+        DB_PASSWORD: ${{ secrets.ACTIONS_DB_PASSWORD }}
+        DB_NAME: ${{ secrets.ACTIONS_DB_NAME }}
       run: |
         mysql -h 127.0.0.1 -uroot -proot -e "SOURCE ./config/init.sql"
 
     - name: Run tests
       env:
         DB_HOST: 127.0.0.1
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        JWT_EXPIRES_IN : ${{ secrets.JWT_EXPIRES_IN }}
+        DB_HOST: ${{ secrets.ACTIONS_DB_HOST }}
+        DB_USER: ${{ secrets.ACTIONS_DB_USER }}
+        DB_PASSWORD: ${{ secrets.ACTIONS_DB_PASSWORD }}
+        DB_NAME: ${{ secrets.ACTIONS_DB_NAME }}
+        JWT_SECRET: ${{ secrets.ACTIONS_JWT_SECRET }}
+        JWT_EXPIRES_IN : ${{ secrets.ACTIONS_JWT_EXPIRES_IN }}
       run: |
         cd ecommerce_back
         npm test
