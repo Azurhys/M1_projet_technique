@@ -15,6 +15,7 @@ describe('Register Page', () => {
   
     
     it('should register & login successfully with correct details', () => {
+    cy.intercept('POST', '**/auth/login').as('loginRequest');    
       cy.get('input[type="text"]').eq(0).type('John');
       cy.get('input[type="text"]').eq(1).type('Doe');
       cy.get('input[type="email"]').type('newuser@example.com');
@@ -32,7 +33,10 @@ describe('Register Page', () => {
       cy.get('input[type="email"]').type('newuser@example.com');
       cy.get('input[type="password"]').type('password123');
       cy.get('button[type="submit"]').click();
-      cy.wait(5000)
+      cy.wait('@loginRequest').then((interception) => {
+        expect(interception.response.statusCode).to.equal(200);
+        cy.url().should('eq', 'http://localhost:5173/');
+      });
       cy.url().should('eq', 'http://localhost:5173/');
     });
 

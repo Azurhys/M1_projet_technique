@@ -21,11 +21,14 @@ describe('Login Page', () => {
     });
   
     it('should login successfully with correct credentials', () => {
+        cy.intercept('POST', '**/auth/login').as('loginRequest');
       cy.get('input[type="email"]').type('admin@example.com');
       cy.get('input[type="password"]').type('admin123');
       cy.get('button[type="submit"]').click();
-      cy.wait(5000)
-      cy.url().should('eq', 'http://localhost:5173/');
+      cy.wait('@loginRequest').then((interception) => {
+        expect(interception.response.statusCode).to.equal(200);
+        cy.url().should('eq', 'http://localhost:5173/');
+      });
     });
   });
   
