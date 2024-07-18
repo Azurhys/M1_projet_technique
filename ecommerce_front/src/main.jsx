@@ -18,6 +18,7 @@ import AdminDashboard from './pages/PanelAdmin.jsx';
 import CategoryForm from './components/CategoryForm.jsx';
 import ProductForm from './components/ProductForm.jsx';
 import Interdit from './pages/Interdit.jsx';
+import Profile from './pages/Profil.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path='/' element={<App />}> 
               <Route index element={<Home />} />
+              <Route path="/profil" element={<Profile />} />
               <Route path="/articles" element={<Articles  />} /> 
               <Route path="/login" element={<Login />} />
               <Route path='/register' element={<Register />} />
