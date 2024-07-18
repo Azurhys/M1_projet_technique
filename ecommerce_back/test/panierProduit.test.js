@@ -35,7 +35,9 @@ describe('PanierProduit API', () => {
           id_produit: idProduit,
           quantite: 2
         });
-
+  
+      console.log('Réponse POST /panierProduits:', res.body);
+  
       const expect = chai.expect;
       expect(res.status).to.equal(201);
       expect(res.body).to.have.property('id_panier', idPanier);
@@ -43,6 +45,7 @@ describe('PanierProduit API', () => {
       expect(res.body).to.have.property('quantite', 2);
     });
   });
+  
 
   describe('GET /panierProduits', () => {
     it('devrait récupérer tous les produits des paniers', async () => {
