@@ -34,7 +34,7 @@ describe('Auth API', () => {
         .send({
           nom: 'Test',
           prenom: 'User',
-          email: 'testuser@example.com', // Assuming this email already exists
+          email: 'testuser@example.com', 
           mot_de_passe: 'password123',
           adresse: '123 Test Street',
           telephone: '1234567890',
