@@ -11,6 +11,7 @@ const RecapPanier = () => {
 
     const { user } = useContext(AuthContext);
     const userId = user ? user.id_utilisateur : null;
+    console.log(userId);
 
     useEffect(() => {
         setCartItems(savedCart);
@@ -46,7 +47,7 @@ const RecapPanier = () => {
                             for (const item of cartItems) {
                                 const panierProduit = panierProduits.find(p => p.id_produit == item.id);
                                 if (panierProduit) {
-                                    const responsePanierProduit = await fetch(`http://localhost:3000/panierProduits/put/${panierId}/${item.id}`, {
+                                    const responsePanierProduit = await fetch(`http://localhost:3000/panierProduits/${panierId}/${item.id}`, {
                                         method: 'PUT',
                                         headers: {
                                             'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ const RecapPanier = () => {
                                         console.error(`Erreur de mise à jour du produit ${item.id} dans le panier ${panierId}`);
                                     }
                                 } else {
-                                    await fetch('http://localhost:3000/panierProduits/add', {
+                                    await fetch('http://localhost:3000/panierProduits', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ const RecapPanier = () => {
                                 const foundInCart = savedCart.find(item => item.id == panierProduit.id_produit);
                                 if (!foundInCart) {
                                     console.log(`Suppression du produit ${panierProduit.id_produit} du panier ${panierId}`);
-                                    await fetch(`http://localhost:3000/panierProduits/delete/${panierId}/${panierProduit.id_produit}`, {
+                                    await fetch(`http://localhost:3000/panierProduits/${panierId}/${panierProduit.id_produit}`, {
                                         method: 'DELETE',
                                     });
                                 }
@@ -98,7 +99,7 @@ const RecapPanier = () => {
                         total
                     };
 
-                    const responsePanier = await fetch('http://localhost:3000/paniers/add', {
+                    const responsePanier = await fetch('http://localhost:3000/paniers/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -112,7 +113,7 @@ const RecapPanier = () => {
 
                         // Ajouter les produits dans Panier_Produit
                         for (const item of cartItems) {
-                            await fetch('http://localhost:3000/panierProduits/add', {
+                            await fetch('http://localhost:3000/panierProduits/', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',

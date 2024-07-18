@@ -43,6 +43,22 @@ router.get('/:id_panier', async (req, res, next) => {
   }
 });
 
+//GET ONE BY USER
+router.get('/user/:id_user', async (req, res, next) => {
+  const { id_user } = req.params;
+  try {
+    const [rows] = await db.query('SELECT * FROM Panier WHERE id_utilisateur = ?', [id_user]);
+    if (rows.length === 0) {
+      res.status(404).json({ message: 'Panier non trouvé' });
+    } else {
+      res.status(200).json(rows[0]);
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 //PUT
 router.put('/:id_panier', async (req, res, next) => {
   const { id_panier } = req.params;
