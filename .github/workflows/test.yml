@@ -50,11 +50,11 @@ jobs:
     - name: Run tests
       env:
         DB_HOST: 127.0.0.1
-        DB_USER: root
-        DB_PASSWORD: root
-        DB_NAME: ecommerce
-        JWT_SECRET : your_jwt_secret
-        JWT_EXPIRES_IN : 1d
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        JWT_EXPIRES_IN : ${{ secrets.JWT_EXPIRES_IN }}
       run: |
         cd ecommerce_back
         npm test
