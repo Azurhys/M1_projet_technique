@@ -32,7 +32,9 @@ jobs:
         node-version: '14'
 
     - name: Install dependencies
-      run: npm install
+      run: |
+        cd ecommerce_back
+        npm install
 
     - name: Wait for MySQL to be ready
       run: |
@@ -51,4 +53,6 @@ jobs:
         DB_USER: root
         DB_PASSWORD: root
         DB_NAME: ecommerce
-      run: npm test
+      run: |
+        cd ecommerce_back
+        npm test
