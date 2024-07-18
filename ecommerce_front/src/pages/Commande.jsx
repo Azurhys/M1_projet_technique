@@ -50,7 +50,7 @@ const Commande = () => {
         }
 
         const newOrder = {
-            id_utilisateur: user.id,
+            id_utilisateur: user.id_utilisateur,
             id_panier: panierId,
             date_commande: new Date().toISOString(),
             nom: nom,
@@ -64,7 +64,7 @@ const Commande = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:3000/commandes/add', {
+            const response = await fetch('http://localhost:3000/commandes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,8 +73,8 @@ const Commande = () => {
             });
 
             if (response.ok) {
-                toast.success("Commande passée avec succès");
-                navigate('/confirmation');
+                const data = await response.json();
+                navigate('/confirmation-commande', { state: { id_commande: data.id_commande } });
             } else {
                 toast.error("Erreur lors de la création de la commande");
             }

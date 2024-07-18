@@ -43,6 +43,21 @@ router.get('/:id_panier', async (req, res, next) => {
   }
 });
 
+//GET MANY
+router.get('/infos/:id_panier', async (req, res, next) => {
+  const { id_panier } = req.params;
+  try {
+    const [rows] = await db.query('SELECT * FROM Panier_Produit INNER JOIN Produit WHERE Panier_Produit.id_produit = Produit.id_produit AND id_panier = ?', [id_panier]);
+    if (rows.length === 0) {
+      res.status(404).json({ message: 'Aucun produit trouvé dans ce panier' });
+    } else {
+      res.status(200).json(rows);
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
 //PUT
 router.put('/:id_panier/:id_produit', async (req, res, next) => {
   const { id_panier, id_produit } = req.params;

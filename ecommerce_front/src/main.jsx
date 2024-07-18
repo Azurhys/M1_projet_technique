@@ -11,7 +11,7 @@ import DetailsArticles from './pages/DetailsArticle.jsx';
 import Panier from './pages/Panier.jsx';
 import RecapPanier from './pages/RecapPanier.jsx';
 import Commande from './pages/Commande.jsx';
-import RecapCommande from './pages/RecapCommande.jsx';
+import ConfirmationCommande from './pages/ConfirmationCommande.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import Register from './pages/Register.jsx';
 import AdminDashboard from './pages/PanelAdmin.jsx';
@@ -35,7 +35,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="/panier" element={<Panier />} />
               <Route path="/recap-panier" element={<RecapPanier />} />
               <Route path="/commande" element={<Commande />} />
-              <Route path="/recap-commande" element={<RecapCommande />} />
+              <Route path="/confirmation-commande" element={<ConfirmationCommande />} />
               <Route path='/forbidden' element={<Interdit />} />
           </Route>    
           </Routes>
