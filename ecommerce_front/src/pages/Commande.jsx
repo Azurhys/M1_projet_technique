@@ -5,9 +5,10 @@ import { AuthContext } from '../contexts/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCreditCard, faCalendarAlt, faLock } from '@fortawesome/free-solid-svg-icons';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 const Commande = () => {
-    const { user } = useContext(AuthContext);
+    const { user, token } = useContext(AuthContext);
     const navigate = useNavigate();
     const [nom, setNom] = useState('');
     const [prenom, setPrenom] = useState('');
@@ -19,17 +20,25 @@ const Commande = () => {
     const [cartItems, setCartItems] = useState([]);
     const [panierId, setPanierId] = useState(null);
 
+    const requestOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    };
+
     useEffect(() => {
         const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
         setCartItems(savedCart);
         fetchPanierId();
+        fetchUserInfo();  // Fetch user info on component mount
     }, []);
 
     const fetchPanierId = async () => {
         if (!user) return;
 
         try {
-            const response = await fetch(`http://localhost:3000/paniers/user/${user.id_utilisateur}`);
+            const response = await fetch(`http://localhost:3000/paniers/user/${user.id_utilisateur}`, requestOptions);
             if (response.ok) {
                 const panier = await response.json();
                 setPanierId(panier.id_panier);
@@ -39,6 +48,25 @@ const Commande = () => {
         } catch (error) {
             console.error('Erreur:', error);
             toast.error("Erreur lors de la récupération du panier");
+        }
+    };
+
+    const fetchUserInfo = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/auth/me', requestOptions);
+            if (response.ok) {
+                const data = await response.json();
+
+                setNom(data.nom);
+                setPrenom(data.prenom);
+                setAdresseLivraison(data.adresse);
+                setAdresseFacturation(data.adresse);
+            } else {
+                toast.error("Erreur lors de la récupération des informations de l'utilisateur");
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            toast.error("Erreur lors de la récupération des informations de l'utilisateur");
         }
     };
 
@@ -66,9 +94,7 @@ const Commande = () => {
         try {
             const response = await fetch('http://localhost:3000/commandes', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: requestOptions.headers,
                 body: JSON.stringify(newOrder),
             });
 
@@ -85,102 +111,104 @@ const Commande = () => {
     };
 
     return (
-        <div className="container my-5">
-            <h2 className="text-center mb-4">Passer une Commande</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group mb-3">
-                    <label>Nom</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={nom}
-                        onChange={(e) => setNom(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group mb-3">
-                    <label>Prénom</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={prenom}
-                        onChange={(e) => setPrenom(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group mb-3">
-                    <label>Adresse de livraison</label>
-                    <textarea
-                        className="form-control"
-                        value={adresseLivraison}
-                        onChange={(e) => setAdresseLivraison(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group mb-3">
-                    <label>Adresse de facturation</label>
-                    <textarea
-                        className="form-control"
-                        value={adresseFacturation}
-                        onChange={(e) => setAdresseFacturation(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group mb-3">
-                    <label>Numéro de carte</label>
-                    <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">
-                                <FontAwesomeIcon icon={faCreditCard} />
-                            </span>
-                        </div>
+        <ProtectedRoute requiredRole={0}>
+            <div className="container my-5">
+                <h2 className="text-center mb-4">Passer une Commande</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group mb-3">
+                        <label>Nom</label>
                         <input
                             type="text"
                             className="form-control"
-                            value={numeroCarte}
-                            onChange={(e) => setNumeroCarte(e.target.value)}
+                            value={nom}
+                            onChange={(e) => setNom(e.target.value)}
                             required
                         />
                     </div>
-                </div>
-                <div className="form-group mb-3">
-                    <label>Date d'expiration</label>
-                    <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">
-                                <FontAwesomeIcon icon={faCalendarAlt} />
-                            </span>
-                        </div>
-                        <input
-                            type="month"
-                            className="form-control"
-                            value={dateExpir}
-                            onChange={(e) => setDateExpir(e.target.value)}
-                            required
-                        />
-                    </div>
-                </div>
-                <div className="form-group mb-3">
-                    <label>Cryptogramme</label>
-                    <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">
-                                <FontAwesomeIcon icon={faLock} />
-                            </span>
-                        </div>
+                    <div className="form-group mb-3">
+                        <label>Prénom</label>
                         <input
                             type="text"
                             className="form-control"
-                            value={cryptogramme}
-                            onChange={(e) => setCryptogramme(e.target.value)}
+                            value={prenom}
+                            onChange={(e) => setPrenom(e.target.value)}
                             required
-                            maxLength="3"
                         />
                     </div>
-                </div>
-                <button type="submit" className="btn btn-primary">Passer la commande</button>
-            </form>
-        </div>
+                    <div className="form-group mb-3">
+                        <label>Adresse de livraison</label>
+                        <textarea
+                            className="form-control"
+                            value={adresseLivraison}
+                            onChange={(e) => setAdresseLivraison(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label>Adresse de facturation</label>
+                        <textarea
+                            className="form-control"
+                            value={adresseFacturation}
+                            onChange={(e) => setAdresseFacturation(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label>Numéro de carte</label>
+                        <div className="input-group">
+                            <div className="input-group-prepend">
+                                <span className="input-group-text">
+                                    <FontAwesomeIcon icon={faCreditCard} />
+                                </span>
+                            </div>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={numeroCarte}
+                                onChange={(e) => setNumeroCarte(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group mb-3">
+                        <label>Date d'expiration</label>
+                        <div className="input-group">
+                            <div className="input-group-prepend">
+                                <span className="input-group-text">
+                                    <FontAwesomeIcon icon={faCalendarAlt} />
+                                </span>
+                            </div>
+                            <input
+                                type="month"
+                                className="form-control"
+                                value={dateExpir}
+                                onChange={(e) => setDateExpir(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group mb-3">
+                        <label>Cryptogramme</label>
+                        <div className="input-group">
+                            <div className="input-group-prepend">
+                                <span className="input-group-text">
+                                    <FontAwesomeIcon icon={faLock} />
+                                </span>
+                            </div>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={cryptogramme}
+                                onChange={(e) => setCryptogramme(e.target.value)}
+                                required
+                                maxLength="3"
+                            />
+                        </div>
+                    </div>
+                    <button type="submit" className="btn btn-primary">Passer la commande</button>
+                </form>
+            </div>
+        </ProtectedRoute>
     );
 };
 

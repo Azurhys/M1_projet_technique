@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ProtectedRoute from './ProtectedRoute';
+import { AuthContext } from '../contexts/AuthContext';
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
@@ -13,13 +14,20 @@ const ProductForm = () => {
     id_categorie: '',
     image_url: ''
   });
+  const { token } = useContext(AuthContext);
+  const requestOptions = {
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    }
+};
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsResponse = await fetch('http://localhost:3000/produits');
+        const productsResponse = await fetch('http://localhost:3000/produits', requestOptions);
         const productsData = await productsResponse.json();
-        const categoriesResponse = await fetch('http://localhost:3000/categories');
+        const categoriesResponse = await fetch('http://localhost:3000/categories', requestOptions);
         const categoriesData = await categoriesResponse.json();
         setProducts(productsData);
         setCategories(categoriesData);
@@ -39,19 +47,13 @@ const ProductForm = () => {
     e.preventDefault();
     try {
       if (product.id_produit) {
-        await fetch(`http://localhost:3000/produits/${product.id_produit}`, {
+        await fetch(`http://localhost:3000/produits/${product.id_produit}`, requestOptions, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
           body: JSON.stringify(product)
         });
       } else {
-        await fetch('http://localhost:3000/produits', {
+        await fetch('http://localhost:3000/produits', requestOptions,{
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
           body: JSON.stringify(product)
         });
       }
@@ -64,7 +66,7 @@ const ProductForm = () => {
         id_categorie: '',
         image_url: ''
       });
-      const productsResponse = await fetch('http://localhost:3000/produits');
+      const productsResponse = await fetch('http://localhost:3000/produits', requestOptions);
       const productsData = await productsResponse.json();
       setProducts(productsData);
     } catch (error) {
@@ -78,7 +80,7 @@ const ProductForm = () => {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:3000/produits/${id}`, {
+      await fetch(`http://localhost:3000/produits/${id}`, requestOptions, {
         method: 'DELETE'
       });
       setProducts(products.filter((product) => product.id_produit !== id));

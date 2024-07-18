@@ -11,7 +11,6 @@ const RecapPanier = () => {
     
     const { user, token } = useContext(AuthContext);
     const userId = user ? user.id_utilisateur : null;
-    console.log(userId);
 
     useEffect(() => {
         setCartItems(savedCart);
