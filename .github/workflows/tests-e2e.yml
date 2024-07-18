@@ -1,4 +1,4 @@
-name: Tests Backend
+name: Tests E2E
 
 on:
   push:
@@ -59,7 +59,7 @@ jobs:
         mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SELECT * FROM Panier;" "$DB_NAME"
         mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SELECT * FROM Produit;" "$DB_NAME"
 
-    - name: Run backend tests
+    - name: Run backend server
       env:
         DB_HOST: 127.0.0.1
         DB_USER: root
@@ -68,7 +68,7 @@ jobs:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
       run: |
         cd ecommerce_back
-        npm start
+        npm start > backend.log 2>&1 &
 
     - name: Start Vite server
       run: |
