@@ -20,7 +20,7 @@ const Login = () => {
 
       if (response.status === 200) {
         login(response.data.token);
-        navigate('/'); // Redirection vers la page d'accueil après une connexion réussie
+        navigate('/'); 
       } else {
         toast.success(response.data.message);
       }
