@@ -102,4 +102,21 @@ router.delete('/:id_commande', async (req, res, next) => {
   }
 });
 
+// GET commandes by user
+router.get('/user/:id_utilisateur', authMiddleware, async (req, res, next) => {
+  const { id_utilisateur } = req.params;
+  try {
+    const [commandes] = await db.query('SELECT * FROM Commande WHERE id_utilisateur = ?', [id_utilisateur]);
+
+    const commandesWithCart = await Promise.all(commandes.map(async (commande) => {
+      const [panierProduits] = await db.query('SELECT pp.*, p.nom, p.prix FROM Panier_Produit pp JOIN Produit p ON pp.id_produit = p.id_produit WHERE pp.id_panier = ?', [commande.id_panier]);
+      return { ...commande, panierProduits };
+    }));
+
+    res.status(200).json(commandesWithCart);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
