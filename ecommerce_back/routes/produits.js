@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const Product = require('../models/produit');
+const authMiddleware = require('../middleware/auth');
+const checkRole = require('../middleware/roles');
 
 //POST
-router.post('/', async (req, res, next) => {
+router.post('/',authMiddleware, checkRole([1]), async (req, res, next) => {
   const { nom, description, prix, stock, image_url, id_categorie } = req.body;
   try {
     const [result] = await db.query(
@@ -19,7 +21,7 @@ router.post('/', async (req, res, next) => {
 });
 
 //PUT
-router.put('/:id_produit', async (req, res, next) => {
+router.put('/:id_produit',authMiddleware, checkRole([1]), async (req, res, next) => {
   const { id_produit } = req.params;
   const { nom, description, prix, stock, image_url, id_categorie } = req.body;
   try {
@@ -34,7 +36,7 @@ router.put('/:id_produit', async (req, res, next) => {
 });
 
 //DELETE
-router.delete('/:id_produit', async (req, res, next) => {
+router.delete('/:id_produit',authMiddleware, checkRole([1]), async (req, res, next) => {
   const { id_produit } = req.params;
   try {
     await db.query('DELETE FROM Produit WHERE id_produit = ?', [id_produit]);

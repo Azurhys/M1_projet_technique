@@ -1,20 +1,34 @@
 const request = require('supertest');
-const app = require('../app'); // Assurez-vous que le chemin vers app.js est correct
-const db = require('../config/db'); // Assurez-vous que le chemin vers db est correct
+const app = require('../app'); 
+const db = require('../config/db'); 
 
 describe('Produit API', () => {
   let chai;
   let newProductId;
+  let token;
 
   before(async () => {
-    // Charger Chai dynamiquement
     chai = await import('chai');
+    try {
+      const loginRes = await request(app)
+        .post('/auth/login')
+        .send({
+          email: 'testuser@example.com',
+          mot_de_passe: 'password123'
+        });
+
+      token = loginRes.body.token;
+    } catch (err) {
+      console.error('Erreur lors de l\'authentification:', err);
+      throw err;
+    }
   });
 
   describe('POST /produits', () => {
     it('should create a new product', async () => {
       const res = await request(app)
         .post('/produits')
+        .set('Authorization', `Bearer ${token}`)
         .send({
           nom: 'Produit Test',
           description: 'Description du produit test',
@@ -27,7 +41,7 @@ describe('Produit API', () => {
       const expect = chai.expect;
       expect(res.status).to.equal(201);
       expect(res.body).to.have.property('id_produit');
-      newProductId = res.body.id_produit; // Sauvegarder l'ID pour les tests suivants
+      newProductId = res.body.id_produit; 
     });
   });
 
@@ -64,6 +78,7 @@ describe('Produit API', () => {
     it('should update an existing product', async () => {
       const res = await request(app)
         .put(`/produits/${newProductId}`)
+        .set('Authorization', `Bearer ${token}`)
         .send({
           nom: 'Produit Test Modifié',
           description: 'Description modifiée',
@@ -80,8 +95,10 @@ describe('Produit API', () => {
   });
 
   describe('DELETE /produits/:id_produit', () => {
-    it('should delete an existing product', async () => {
-      const res = await request(app).delete(`/produits/${newProductId}`);
+    it('devrait supprimer un produit existant', async () => {
+      const res = await request(app)
+        .delete(`/produits/${newProductId}`)
+        .set('Authorization', `Bearer ${token}`);
 
       const expect = chai.expect;
       expect(res.status).to.equal(204);

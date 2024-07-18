@@ -4,6 +4,8 @@ const db = require('../config/db');
 const Order = require('../models/commande');
 const sendOrderSummary = require('../utils/sendEmail');
 const getUserEmail = require('../utils/getUserEmail');
+const authMiddleware = require('../middleware/auth');
+const checkRole = require('../middleware/roles');
 
 //ADD
 router.post('/', async (req, res, next) => {

@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../app'); // Assurez-vous que le chemin vers app.js est correct
+const app = require('../app'); 
 
 describe('Auth API', () => {
   let chai;
