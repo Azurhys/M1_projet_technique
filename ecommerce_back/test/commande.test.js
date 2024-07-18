@@ -1,6 +1,6 @@
 const request = require('supertest');
-const chai = require('chai');
-const expect = chai.expect;
+let chai;
+let expect;
 const app = require('../app');
 const db = require('../config/db');
 
@@ -10,6 +10,11 @@ describe('Commande API', () => {
 
   before(async () => {
     try {
+      // Import chai dynamically
+      const importedChai = await import('chai');
+      chai = importedChai.default;
+      expect = chai.expect;
+
       const loginRes = await request(app)
         .post('/auth/login')
         .send({
