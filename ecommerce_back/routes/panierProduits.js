@@ -7,13 +7,29 @@ const CartProduct = require('../models/panierProduit');
 router.post('/', async (req, res, next) => {
   const { id_panier, id_produit, quantite } = req.body;
   try {
-    await db.query(
+    console.log('Requête reçue pour ajouter un produit au panier:', req.body);
+
+    // Log the existing entries in the table
+    const [existingEntries] = await db.query('SELECT * FROM Panier_Produit');
+    console.log('Entries in Panier_Produit before insert:', existingEntries);
+
+    const [result] = await db.query(
       'INSERT INTO Panier_Produit (id_panier, id_produit, quantite) VALUES (?, ?, ?)',
       [id_panier, id_produit, quantite]
     );
+
+    // Log the result of the insert operation
+    console.log('Result of insert:', result);
+
+    // Log the entries after the insert
+    const [newEntries] = await db.query('SELECT * FROM Panier_Produit');
+    console.log('Entries in Panier_Produit after insert:', newEntries);
+
     const newCartProduct = new CartProduct(id_panier, id_produit, quantite);
     res.status(201).json(newCartProduct);
   } catch (err) {
+    console.error('Erreur lors de l\'ajout du produit au panier:', err);
+    res.status(500).json({ error: 'Erreur interne du serveur', details: err.message });
     next(err);
   }
 });

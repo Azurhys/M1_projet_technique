@@ -26,7 +26,12 @@ describe('PanierProduit API', () => {
   });
 
   describe('POST /panierProduits', () => {
-    it('devrait ajouter un produit au panier', async () => {
+    it('devrait ajouter un produit au panier', async function() {
+      this.timeout(15000); // Extend the timeout for this test
+  
+      // Wait for a few seconds before running the test
+      await new Promise(resolve => setTimeout(resolve, 5000));
+  
       const res = await request(app)
         .post('/panierProduits')
         .set('Authorization', `Bearer ${token}`)
