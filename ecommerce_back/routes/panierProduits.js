@@ -9,24 +9,24 @@ router.post('/', async (req, res, next) => {
   try {
     console.log('Requête reçue pour ajouter un produit au panier:', req.body);
 
-    // Log the existing entries in the table
-    const [existingEntries] = await db.query('SELECT * FROM Panier_Produit');
-    console.log('Entries in Panier_Produit before insert:', existingEntries);
-
-    const [result] = await db.query(
-      'INSERT INTO Panier_Produit (id_panier, id_produit, quantite) VALUES (?, ?, ?)',
-      [id_panier, id_produit, quantite]
+    const [existingEntries] = await db.query(
+      'SELECT * FROM Panier_Produit WHERE id_panier = ? AND id_produit = ?',
+      [id_panier, id_produit]
     );
 
-    // Log the result of the insert operation
-    console.log('Result of insert:', result);
+    if (existingEntries.length > 0) {
+      // Si l'entrée existe déjà, renvoyez un message d'erreur
+      res.status(409).json({ error: 'Le produit existe déjà dans le panier' });
+    } else {
+      // Sinon, insérez la nouvelle entrée
+      const [result] = await db.query(
+        'INSERT INTO Panier_Produit (id_panier, id_produit, quantite) VALUES (?, ?, ?)',
+        [id_panier, id_produit, quantite]
+      );
 
-    // Log the entries after the insert
-    const [newEntries] = await db.query('SELECT * FROM Panier_Produit');
-    console.log('Entries in Panier_Produit after insert:', newEntries);
-
-    const newCartProduct = new CartProduct(id_panier, id_produit, quantite);
-    res.status(201).json(newCartProduct);
+      const newCartProduct = new CartProduct(id_panier, id_produit, quantite);
+      res.status(201).json(newCartProduct);
+    }
   } catch (err) {
     console.error('Erreur lors de l\'ajout du produit au panier:', err);
     res.status(500).json({ error: 'Erreur interne du serveur', details: err.message });
