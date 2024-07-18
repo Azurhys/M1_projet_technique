@@ -8,8 +8,8 @@ const RecapPanier = () => {
     const [cartItems, setCartItems] = useState([]);
     const navigate = useNavigate();
     const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    const { user } = useContext(AuthContext);
+    
+    const { user, token } = useContext(AuthContext);
     const userId = user ? user.id_utilisateur : null;
     console.log(userId);
 
@@ -30,8 +30,14 @@ const RecapPanier = () => {
             const total = calculateCartTotal();
             let panierId;
 
-            // Vérifier si l'utilisateur a déjà un panier
-            const responseGetPanier = await fetch(`http://localhost:3000/paniers`);
+            const requestOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            const responseGetPanier = await fetch(`http://localhost:3000/paniers`, requestOptions);
             if (responseGetPanier.ok) {
                 const paniers = await responseGetPanier.json();
                 const existingPanier = paniers.find(panier => panier.id_utilisateur === userId);
@@ -39,7 +45,7 @@ const RecapPanier = () => {
                 if (existingPanier) {
                     panierId = existingPanier.id_panier;
 
-                    const responseGetPanierProduits = await fetch(`http://localhost:3000/panierProduits/${panierId}`);
+                    const responseGetPanierProduits = await fetch(`http://localhost:3000/panierProduits/${panierId}`, requestOptions);
                     if (responseGetPanierProduits.ok) {
                         const panierProduits = await responseGetPanierProduits.json();
 
@@ -49,9 +55,7 @@ const RecapPanier = () => {
                                 if (panierProduit) {
                                     const responsePanierProduit = await fetch(`http://localhost:3000/panierProduits/${panierId}/${item.id}`, {
                                         method: 'PUT',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
+                                        ...requestOptions,
                                         body: JSON.stringify({ quantite: item.quantity }),
                                     });
                                     if (!responsePanierProduit.ok) {
@@ -60,9 +64,7 @@ const RecapPanier = () => {
                                 } else {
                                     await fetch('http://localhost:3000/panierProduits', {
                                         method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
+                                        ...requestOptions,
                                         body: JSON.stringify({
                                             id_panier: panierId,
                                             id_produit: item.id,
@@ -79,11 +81,12 @@ const RecapPanier = () => {
                                     console.log(`Suppression du produit ${panierProduit.id_produit} du panier ${panierId}`);
                                     await fetch(`http://localhost:3000/panierProduits/${panierId}/${panierProduit.id_produit}`, {
                                         method: 'DELETE',
+                                        ...requestOptions
                                     });
                                 }
                             }
                         } else {
-                            toast.error("La réponse des produits du panier n\'est pas valide");
+                            toast.error("La réponse des produits du panier n'est pas valide");
                             return;
                         }
                     } else {
@@ -101,9 +104,7 @@ const RecapPanier = () => {
 
                     const responsePanier = await fetch('http://localhost:3000/paniers/', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        ...requestOptions,
                         body: JSON.stringify(newCart),
                     });
 
@@ -115,9 +116,7 @@ const RecapPanier = () => {
                         for (const item of cartItems) {
                             await fetch('http://localhost:3000/panierProduits/', {
                                 method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
+                                ...requestOptions,
                                 body: JSON.stringify({
                                     id_panier: panierId,
                                     id_produit: item.id,
