@@ -71,13 +71,16 @@ jobs:
         npm start > backend.log 2>&1 &
 
     - name: Start Vite server
-      run: |
-        cd ecommerce_front
-        npm install
-        npm run dev > vite.log 2>&1 &
-        
-    - name: Wait for servers to be ready
-      run: sleep 30
+        run: |
+          cd ecommerce_front
+          npm install
+          npm run dev &
+          sleep 20
+
+      - name: Install Cypress dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
 
     - name: Run Cypress tests
       env:
@@ -87,5 +90,9 @@ jobs:
         CYPRESS_DB_NAME: ecommerce
         CYPRESS_JWT_SECRET: ${{ secrets.JWT_SECRET }}
       run: |
-        cd ecommerce_front
-        npx cypress run
+          cd ecommerce_front
+          xvfb-run -a npx cypress run --headed --browser chrome
+
+    - name: Stop backend server
+      run: |
+        pkill -f "npm start"
