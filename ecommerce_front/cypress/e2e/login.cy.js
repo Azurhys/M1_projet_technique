@@ -21,8 +21,8 @@ describe('Login Page', () => {
     });
   
     it('should login successfully with correct credentials', () => {
-      cy.get('input[type="email"]').type('testuser@example.com');
-      cy.get('input[type="password"]').type('password123');
+      cy.get('input[type="email"]').type('admin@example.com');
+      cy.get('input[type="password"]').type('admin123');
       cy.get('button[type="submit"]').click();
   
       cy.url().should('eq', 'http://localhost:5173/');
