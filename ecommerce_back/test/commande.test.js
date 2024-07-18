@@ -1,14 +1,14 @@
 const request = require('supertest');
 const app = require('../app');
 const db = require('../config/db');
+const chai = require('chai');
+const expect = chai.expect;
 
 describe('Commande API', () => {
-  let chai;
   let token;
   let newOrderId;
 
   before(async () => {
-    chai = await import('chai');
     try {
       const loginRes = await request(app)
         .post('/auth/login')
@@ -22,7 +22,6 @@ describe('Commande API', () => {
       if (!token) {
         throw new Error('Échec de la connexion: token JWT non reçu');
       }
-
     } catch (err) {
       console.error('Erreur lors de l\'authentification:', err.message);
       throw err;
@@ -45,9 +44,6 @@ describe('Commande API', () => {
           statut_commande: 'En attente'
         });
 
-
-
-      const expect = chai.expect;
       expect(res.status).to.equal(201);
       expect(res.body).to.have.property('id_commande');
       newOrderId = res.body.id_commande;
@@ -60,7 +56,6 @@ describe('Commande API', () => {
         .get('/commandes')
         .set('Authorization', `Bearer ${token}`);
 
-      const expect = chai.expect;
       expect(res.status).to.equal(200);
       expect(res.body).to.be.an('array');
       expect(res.body.length).to.be.above(0);
@@ -73,7 +68,6 @@ describe('Commande API', () => {
         .get(`/commandes/${newOrderId}`)
         .set('Authorization', `Bearer ${token}`);
 
-      const expect = chai.expect;
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('id_commande', newOrderId);
     });
@@ -83,7 +77,6 @@ describe('Commande API', () => {
         .get('/commandes/9999')
         .set('Authorization', `Bearer ${token}`);
 
-      const expect = chai.expect;
       expect(res.status).to.equal(404);
       expect(res.body).to.have.property('message', 'Commande non trouvée');
     });
@@ -91,23 +84,20 @@ describe('Commande API', () => {
 
   describe('PUT /commandes/:id_commande', () => {
     it('devrait mettre à jour une commande existante', async () => {
+      const updatedData = {
+        date_commande: '2024-07-01',
+        adresse_livraison: '456 Rue de Test Modifié',
+        adresse_facturation: '456 Rue de Facturation Modifiée',
+        statut_commande: 'Expédiée'
+      };
+
       const res = await request(app)
         .put(`/commandes/${newOrderId}`)
         .set('Authorization', `Bearer ${token}`)
-        .send({
-          id_utilisateur: 1,
-          id_panier: 1,
-          date_commande: '2024-07-01',
-          total: 150.0,
-          adresse_livraison: '456 Rue de Test Modifié',
-          adresse_facturation: '456 Rue de Facturation Modifiée',
-          mode_paiement: 'PayPal',
-          statut_commande: 'Expédiée'
-        });
+        .send(updatedData);
 
-      const expect = chai.expect;
       expect(res.status).to.equal(200);
-      expect(res.body).to.have.property('total', 150.0);
+      expect(res.body).to.include(updatedData);
     });
   });
 
@@ -117,7 +107,6 @@ describe('Commande API', () => {
         .delete(`/commandes/${newOrderId}`)
         .set('Authorization', `Bearer ${token}`);
 
-      const expect = chai.expect;
       expect(res.status).to.equal(204);
     });
   });
