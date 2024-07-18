@@ -52,7 +52,8 @@ router.post('/login', async (req, res, next) => {
         nom: user[0].nom,
         prenom: user[0].prenom,
         email: user[0].email,
-        droit: user[0].droit
+        droit: user[0].droit,
+        adresse: user[0].adresse,
       };
 
       const token = jwt.sign(
