@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha --timeout 10000 && npm run stop-server",
-    "stop-server": "kill $(lsof -t -i:3000)"
+    "test": "mocha --timeout 10000 --file ./test/global-teardown.js"
   },
   "dependencies": {
     "archiver": "^7.0.1",
