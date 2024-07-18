@@ -9,7 +9,7 @@ on:
       - '**'
 
 jobs:
-  tests backend:
+  build:
     runs-on: ubuntu-latest
     environment: ACTIONS
     services:
