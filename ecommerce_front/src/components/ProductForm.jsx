@@ -46,17 +46,26 @@ const ProductForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (product.id_produit) {
-        await fetch(`http://localhost:3000/produits/${product.id_produit}`, requestOptions, {
-          method: 'PUT',
-          body: JSON.stringify(product)
-        });
-      } else {
-        await fetch('http://localhost:3000/produits', requestOptions,{
-          method: 'POST',
-          body: JSON.stringify(product)
-        });
+      const method = product.id_produit ? 'PUT' : 'POST';
+      const url = product.id_produit
+        ? `http://localhost:3000/produits/${product.id_produit}`
+        : 'http://localhost:3000/produits';
+        
+      const requestOptions = {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(product)
+      };
+  
+      const response = await fetch(url, requestOptions);
+  
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP! statut: ${response.status}`);
       }
+  
       setProduct({
         id_produit: '',
         nom: '',
@@ -66,7 +75,14 @@ const ProductForm = () => {
         id_categorie: '',
         image_url: ''
       });
-      const productsResponse = await fetch('http://localhost:3000/produits', requestOptions);
+  
+      // Recharger les produits après la modification
+      const productsResponse = await fetch('http://localhost:3000/produits', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const productsData = await productsResponse.json();
       setProducts(productsData);
     } catch (error) {
