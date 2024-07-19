@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/auth');
 const checkRole = require('../middleware/roles');
 
 // ADD a category
-router.post('/', authMiddleware, checkRole([1]), async (req, res, next) => {
+router.post('/', authMiddleware,  async (req, res, next) => {
   const { nom } = req.body;
   try {
     const [result] = await db.query('INSERT INTO Categorie (nom) VALUES (?)', [nom]);
@@ -18,7 +18,7 @@ router.post('/', authMiddleware, checkRole([1]), async (req, res, next) => {
 });
 
 // UPDATE a category
-router.put('/:id_categorie', authMiddleware, checkRole([1]), async (req, res, next) => {
+router.put('/:id_categorie', authMiddleware, async (req, res, next) => {
   const { id_categorie } = req.params;
   const { nom } = req.body;
   try {
@@ -30,7 +30,7 @@ router.put('/:id_categorie', authMiddleware, checkRole([1]), async (req, res, ne
 });
 
 // DELETE a category
-router.delete('/:id_categorie', authMiddleware, checkRole([1]), async (req, res, next) => {
+router.delete('/:id_categorie', authMiddleware,  async (req, res, next) => {
   const { id_categorie } = req.params;
   try {
     await db.query('DELETE FROM Categorie WHERE id_categorie = ?', [id_categorie]);

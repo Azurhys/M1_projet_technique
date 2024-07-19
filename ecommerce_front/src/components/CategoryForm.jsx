@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ProtectedRoute from './ProtectedRoute';
+import { AuthContext } from '../contexts/AuthContext';
 
 const CategoryForm = () => {
   const [categories, setCategories] = useState([]);
@@ -8,14 +9,21 @@ const CategoryForm = () => {
     nom: '',
     id_categorie_parent: ''
   });
+  const { token } = useContext(AuthContext);
+  const requestOptions = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:3000/categories');
+        const response = await fetch('http://localhost:3000/categories', requestOptions);
         const categoriesData = await response.json();
 
-        const responseSubCategories = await fetch('http://localhost:3000/souscategories');
+        const responseSubCategories = await fetch('http://localhost:3000/souscategories', requestOptions);
         const subCategoriesData = await responseSubCategories.json();
 
         const categoriesWithSubCategories = categoriesData.map(cat => {
@@ -31,7 +39,7 @@ const CategoryForm = () => {
       }
     };
     fetchCategories();
-  }, []);
+  }, [token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,9 +53,7 @@ const CategoryForm = () => {
         if (category.id_categorie_parent) {
           await fetch(`http://localhost:3000/souscategories/${category.id_categorie}`, {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: requestOptions.headers,
             body: JSON.stringify({
               nom: category.nom,
               id_categorie: category.id_categorie_parent
@@ -56,9 +62,7 @@ const CategoryForm = () => {
         } else {
           await fetch(`http://localhost:3000/categories/${category.id_categorie}`, {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: requestOptions.headers,
             body: JSON.stringify({ nom: category.nom })
           });
         }
@@ -66,9 +70,7 @@ const CategoryForm = () => {
         if (category.id_categorie_parent) {
           await fetch('http://localhost:3000/souscategories', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: requestOptions.headers,
             body: JSON.stringify({
               nom: category.nom,
               id_categorie: category.id_categorie_parent
@@ -77,9 +79,7 @@ const CategoryForm = () => {
         } else {
           await fetch('http://localhost:3000/categories', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: requestOptions.headers,
             body: JSON.stringify({ nom: category.nom })
           });
         }
@@ -89,44 +89,45 @@ const CategoryForm = () => {
         nom: '',
         id_categorie_parent: ''
       });
-      const response = await fetch('http://localhost:3000/categories');
-      const categoriesData = await response.json();
-
-      const responseSubCategories = await fetch('http://localhost:3000/souscategories');
-      const subCategoriesData = await responseSubCategories.json();
-
-      const categoriesWithSubCategories = categoriesData.map(cat => {
-        return {
-          ...cat,
-          subcategories: subCategoriesData.filter(subCat => subCat.id_categorie === cat.id_categorie)
-        };
-      });
-
-      setCategories(categoriesWithSubCategories);
+      fetchCategories();
     } catch (error) {
       console.error('Erreur lors de la soumission du formulaire :', error);
     }
   };
 
   const handleEdit = (category) => {
-    setCategory(category);
+    setCategory({
+      id_categorie: category.id_categorie || category.id_souscategorie,
+      nom: category.nom,
+      id_categorie_parent: category.id_categorie_parent || category.id_categorie
+    });
   };
 
   const handleDelete = async (id, isSubCategory) => {
     try {
       if (isSubCategory) {
         await fetch(`http://localhost:3000/souscategories/${id}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: requestOptions.headers
         });
       } else {
         await fetch(`http://localhost:3000/categories/${id}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: requestOptions.headers
         });
       }
-      const response = await fetch('http://localhost:3000/categories');
+      fetchCategories();
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la catégorie :', error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/categories', requestOptions);
       const categoriesData = await response.json();
 
-      const responseSubCategories = await fetch('http://localhost:3000/souscategories');
+      const responseSubCategories = await fetch('http://localhost:3000/souscategories', requestOptions);
       const subCategoriesData = await responseSubCategories.json();
 
       const categoriesWithSubCategories = categoriesData.map(cat => {
@@ -138,7 +139,7 @@ const CategoryForm = () => {
 
       setCategories(categoriesWithSubCategories);
     } catch (error) {
-      console.error('Erreur lors de la suppression de la catégorie :', error);
+      console.error('Erreur lors de la récupération des catégories :', error);
     }
   };
 
