@@ -43,6 +43,18 @@ const Panier = () => {
         }
     };
 
+    const handleQuantityChange = async (productId, newQuantity) => {
+        setStockError(null);
+        const inStock = await checkStock(productId, newQuantity);
+        if (!inStock) {
+            setStockError(`La quantité demandée dépasse le stock disponible pour le produit ID: ${productId}.`);
+            return;
+        }
+        setCart(cart.map(product =>
+            product.id === productId ? { ...product, quantity: newQuantity } : product
+        ));
+    };
+
     const handleCheckout = async () => {
         setStockError(null);
         for (const product of cart) {
@@ -73,7 +85,17 @@ const Panier = () => {
                                     <div>
                                         <h5>{product.name}</h5>
                                         <p>Prix unitaire: {product.price.toFixed(2)}€</p>
-                                        <p>Quantité: {product.quantity}</p>
+                                        <div className="d-flex align-items-center">
+                                            <p>Quantité: </p>
+                                            <input
+                                                type="number"
+                                                value={product.quantity}
+                                                min="1"
+                                                className="form-control ml-2"
+                                                style={{ width: '70px' }}
+                                                onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value))}
+                                            />
+                                        </div>
                                         <p>Total: {calculateProductTotal(product).toFixed(2)}€</p>
                                     </div>
                                 </div>
