@@ -2,6 +2,12 @@
 
 Repository de l'évaluation du module Projet Technique en M1 DEV WEB 
 
+### System Design
+
+<p align="center">
+  <img src="/config/System_Design.png">
+</p>
+
 ## Prérequis
 
 - Node.js (16 ou +)
