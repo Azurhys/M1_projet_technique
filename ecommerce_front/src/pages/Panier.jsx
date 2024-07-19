@@ -47,7 +47,7 @@ const Panier = () => {
         setStockError(null);
         const inStock = await checkStock(productId, newQuantity);
         if (!inStock) {
-            setStockError(`La quantité demandée dépasse le stock disponible pour le produit ID: ${productId}.`);
+            setStockError(`La quantité demandée dépasse le stock disponible pour le produit`);
             return;
         }
         setCart(cart.map(product =>
