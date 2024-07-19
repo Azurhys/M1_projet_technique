@@ -4,12 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 const Panier = () => {
     const [cart, setCart] = useState([]);
+    const [stockError, setStockError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-
         const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
-
         savedCart.forEach(product => {
             product.price = parseFloat(product.price);
             product.quantity = parseInt(product.quantity);
@@ -33,10 +32,34 @@ const Panier = () => {
         return cart.reduce((acc, product) => acc + calculateProductTotal(product), 0);
     };
 
+    const checkStock = async (productId, quantity) => {
+        try {
+            const response = await fetch(`http://localhost:3000/produits/${productId}`);
+            const data = await response.json();
+            return data.stock >= quantity;
+        } catch (error) {
+            console.error('Erreur lors de la vérification du stock:', error);
+            return false;
+        }
+    };
+
+    const handleCheckout = async () => {
+        setStockError(null);
+        for (const product of cart) {
+            const inStock = await checkStock(product.id, product.quantity);
+            if (!inStock) {
+                setStockError(`La quantité demandée pour le produit ${product.name} dépasse le stock disponible.`);
+                return;
+            }
+        }
+        navigate("/recap-panier");
+    };
+
     return (
         <div className="container my-5">
             {cart.length > 0 ? (
                 <div>
+                    {stockError && <div className="alert alert-danger">{stockError}</div>}
                     <ul className="list-group">
                         {cart.map(product => (
                             <li key={product.id} className="list-group-item d-flex justify-content-between align-items-center">
@@ -62,7 +85,7 @@ const Panier = () => {
                     </ul>
                     <div className='d-flex justify-content-between mt-5'>
                         <p>Total Panier : <b>{calculateCartTotal().toFixed(2)}€</b></p>
-                        <button className='btn btn-primary px-5' onClick={() => navigate("/recap-panier")}>Valider</button>
+                        <button className='btn btn-primary px-5' onClick={handleCheckout}>Valider</button>
                     </div>
                 </div>
             ) : (
