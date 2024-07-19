@@ -66,7 +66,7 @@ router.get('/all', authMiddleware, checkRole([1]), async (req, res, next) => {
 });
 
 //GET ONE
-router.get('/:id_commande', authMiddleware, checkRole([0]),  async (req, res, next) => {
+router.get('/:id_commande', authMiddleware,  async (req, res, next) => {
   const { id_commande } = req.params;
   try {
     const [rows] = await db.query('SELECT * FROM Commande WHERE id_commande = ?', [id_commande]);
@@ -81,14 +81,27 @@ router.get('/:id_commande', authMiddleware, checkRole([0]),  async (req, res, ne
 });
 
 //PUT
-router.put('/:id_commande', authMiddleware, checkRole([0]),  async (req, res, next) => {
+router.put('/:id_commande', authMiddleware, async (req, res, next) => {
   const { id_commande } = req.params;
-  const {date_commande, adresse_livraison, adresse_facturation, statut_commande } = req.body;
+  const { id_utilisateur, date_commande, adresse_livraison, adresse_facturation, statut_commande } = req.body;
   try {
     await db.query(
       'UPDATE Commande SET date_commande = ?, adresse_livraison = ?, adresse_facturation = ?, statut_commande = ? WHERE id_commande = ?',
       [date_commande, adresse_livraison, adresse_facturation, statut_commande, id_commande]
     );
+
+    // Envoi de l'email de récapitulatif de commande
+    const userEmail = await getUserEmail(id_utilisateur);
+    if (userEmail) {
+      const subject = 'Mise à jour de votre commande';
+      const text = `Votre commande a été mise à jour. Voici les nouveaux détails:\n\nAdresse de livraison: ${adresse_livraison}\nAdresse de facturation: ${adresse_facturation}\nStatut de la commande: ${statut_commande}`;
+      const html = `<h1>Mise à jour de votre commande</h1><p>Voici les nouveaux détails:</p><ul><li>Adresse de livraison: ${adresse_livraison}</li><li>Adresse de facturation: ${adresse_facturation}</li><li>Statut de la commande: ${statut_commande}</li></ul>`;
+
+      await sendOrderSummary(userEmail, subject, text, html);
+    } else {
+      console.error('Email de l\'utilisateur non trouvé');
+    }
+
     res.status(200).json({ id_commande, date_commande, adresse_livraison, adresse_facturation, statut_commande });
   } catch (err) {
     next(err);

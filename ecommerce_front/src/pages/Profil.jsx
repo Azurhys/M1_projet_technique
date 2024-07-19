@@ -30,7 +30,7 @@ const Profile = () => {
         setProfile(data);
       } catch (error) {
         console.error('Error fetching profile:', error);
-        navigate('/login'); // Rediriger vers la page de connexion si non authentifié
+        navigate('/'); // Rediriger vers la page de connexion si non authentifié
       }
     };
 
