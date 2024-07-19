@@ -43,6 +43,28 @@ Le compte administrateur du site par défaut est :
 **login :** admin@example.com
 **password :** admin123
 
+### Déclarer les variables d'environement :
+
+Vous devez déclarer vos variables d'environnement dans un fichier .env dans le répertoire /ecommerce_back
+Les champs sont les suivants : 
+
+```
+DB_HOST=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+DB_PORT=
+
+EMAIL_HOST=
+EMAIL_PORT=
+EMAIL_SECURE=
+EMAIL_USER=
+EMAIL_PASS=
+
+JWT_SECRET=
+JWT_EXPIRES_IN=
+```
+
 ## Fonctionnalités
 
 ### Gestion des Produits

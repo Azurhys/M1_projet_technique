@@ -37,6 +37,7 @@ const Panier = () => {
             const response = await fetch(`http://localhost:3000/produits/${productId}`);
             const data = await response.json();
             return data.stock >= quantity;
+            set
         } catch (error) {
             console.error('Erreur lors de la vérification du stock:', error);
             return false;
